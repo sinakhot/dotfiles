@@ -1,0 +1,59 @@
+# ~/.config/mise/config.toml — managed by chezmoi (sinakhot/dotfiles)
+# https://mise.jdx.dev/configuration.html
+#
+# All tools installed as prebuilt binaries via the `ubi` backend.
+# `mise install` provisions everything below identically across platforms.
+
+[tools]
+# ── Languages (mise's primary use) ──────────────────────────────
+node    = "lts"
+python  = "3.12"
+go      = "latest"
+
+# ── Foundation ──────────────────────────────────────────────────
+"ubi:starship-rs/starship"     = "latest"
+"ubi:zellij-org/zellij"        = "latest"
+"ubi:junegunn/fzf"             = "latest"
+"ubi:ajeetdsouza/zoxide"       = "latest"
+
+# ── File / search replacements ──────────────────────────────────
+"ubi:BurntSushi/ripgrep"       = "latest"
+"ubi:sharkdp/fd"               = "latest"
+"ubi:sharkdp/bat"              = "latest"
+"ubi:eza-community/eza"        = "latest"
+
+# ── Dev / git ───────────────────────────────────────────────────
+"ubi:cli/cli"                  = "latest"  # gh
+"ubi:direnv/direnv"            = "latest"
+"ubi:jesseduffield/lazygit"    = "latest"
+"ubi:dandavison/delta"         = "latest"
+
+# ── Language ecosystem speedups ─────────────────────────────────
+"ubi:astral-sh/uv"             = "latest"
+"ubi:cargo-bins/cargo-binstall" = "latest"
+
+# ── Editor ──────────────────────────────────────────────────────
+"ubi:neovim/neovim"            = "stable"
+
+# ── System monitoring ───────────────────────────────────────────
+"ubi:aristocratos/btop"        = "latest"
+"ubi:bootandy/dust"            = "latest"
+"ubi:muesli/duf"               = "latest"
+"ubi:dalance/procs"            = "latest"
+
+# ── Data wrangling ──────────────────────────────────────────────
+"ubi:jqlang/jq"                = "latest"
+"ubi:mikefarah/yq"             = "latest"
+"ubi:tomnomnom/gron"           = "latest"
+"ubi:johnkerl/miller"          = "latest"
+
+# ── Task runner ─────────────────────────────────────────────────
+"ubi:go-task/task"             = "latest"
+
+[settings]
+# Auto-install missing tools when running `mise <cmd>` in a dir with .mise.toml
+not_found_auto_install = true
+# Quieter activation
+quiet = false
+# Trust this config without explicit `mise trust`
+# (set per-machine via `mise trust ~/.config/mise/config.toml` if you'd rather)

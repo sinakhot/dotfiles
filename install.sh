@@ -10,6 +10,18 @@
 set -euo pipefail
 
 # ──────────────────────────────────────────────────────────────
+# Overrides (for CI / testing)
+#   DOTFILES_REPO    — chezmoi source repo (default: sinakhot/dotfiles)
+#   DOTFILES_BRANCH  — branch to apply (default: main)
+#   SKIP_DOTFILES=1  — skip chezmoi init/apply stage
+#   SKIP_MISE=1      — skip `mise install` stage
+#   SKIP_FISH=1      — skip fish post-setup (fisher + chsh)
+#   NONINTERACTIVE=1 — don't try chsh (CI runners can't take stdin)
+# ──────────────────────────────────────────────────────────────
+DOTFILES_REPO="${DOTFILES_REPO:-sinakhot/dotfiles}"
+DOTFILES_BRANCH="${DOTFILES_BRANCH:-main}"
+
+# ──────────────────────────────────────────────────────────────
 # Colors + branding
 # ──────────────────────────────────────────────────────────────
 if [[ -t 1 ]]; then
@@ -115,17 +127,25 @@ stage_bootstrap() {
 }
 
 stage_dotfiles() {
-    info "Stage 2/4: dotfiles via chezmoi"
+    if [[ "${SKIP_DOTFILES:-0}" == "1" ]]; then
+        warn "Stage 2/4: dotfiles SKIPPED (SKIP_DOTFILES=1)"
+        return
+    fi
+    info "Stage 2/4: dotfiles via chezmoi (repo: $DOTFILES_REPO@$DOTFILES_BRANCH)"
     if [[ -d "$HOME/.local/share/chezmoi/.git" ]]; then
         info "chezmoi already initialized; updating…"
         chezmoi update --apply
     else
-        chezmoi init --apply sinakhot/dotfiles
+        chezmoi init --apply --branch "$DOTFILES_BRANCH" "$DOTFILES_REPO"
     fi
     ok "Dotfiles applied"
 }
 
 stage_mise() {
+    if [[ "${SKIP_MISE:-0}" == "1" ]]; then
+        warn "Stage 3/4: mise install SKIPPED (SKIP_MISE=1)"
+        return
+    fi
     info "Stage 3/4: mise tools"
     if [[ -f "$HOME/.config/mise/config.toml" ]]; then
         mise trust "$HOME/.config/mise/config.toml" || true
@@ -137,6 +157,10 @@ stage_mise() {
 }
 
 stage_fish() {
+    if [[ "${SKIP_FISH:-0}" == "1" ]]; then
+        warn "Stage 4/4: fish post-setup SKIPPED (SKIP_FISH=1)"
+        return
+    fi
     info "Stage 4/4: fish post-setup"
 
     # fisher
@@ -151,7 +175,9 @@ stage_fish() {
     # Default shell
     local fish_path
     fish_path="$(command -v fish)"
-    if [[ "${SHELL:-}" != "$fish_path" ]]; then
+    if [[ "${NONINTERACTIVE:-0}" == "1" ]]; then
+        info "NONINTERACTIVE=1 — skipping chsh"
+    elif [[ "${SHELL:-}" != "$fish_path" ]]; then
         info "Changing default shell to fish"
         if chsh -s "$fish_path"; then
             ok "Shell changed; log out + back in to take effect"

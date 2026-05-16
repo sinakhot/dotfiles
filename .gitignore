@@ -18,5 +18,5 @@ id_rsa
 id_ed25519
 
 # chezmoi local state (if test-applying inside repo)
+# Note: .chezmoiroot IS committed — it's repo metadata
 .chezmoi.toml
-.chezmoiroot

@@ -81,6 +81,35 @@ chezmoi apply
 chezmoi cd               # jump into source dir, git push when ready
 ```
 
+## Repo layout
+
+```
+.
+├── install.sh                    # one-shot bootstrap (curl | bash)
+├── .chezmoiroot                  # points chezmoi at home/
+├── home/                         # chezmoi source dir
+│   └── dot_config/
+│       ├── fish/config.fish      # → ~/.config/fish/config.fish
+│       ├── starship.toml         # → ~/.config/starship.toml
+│       ├── zellij/config.kdl     # → ~/.config/zellij/config.kdl
+│       └── mise/config.toml      # → ~/.config/mise/config.toml
+└── .github/workflows/
+    └── smoke-test.yml            # CI: bootstrap on ubuntu/arch/macos + shellcheck
+```
+
+`dot_` prefix in source = `.` in $HOME (chezmoi convention).
+
+## Installer env vars (CI / testing)
+
+| Var | Default | Purpose |
+|---|---|---|
+| `DOTFILES_REPO` | `sinakhot/dotfiles` | chezmoi source repo |
+| `DOTFILES_BRANCH` | `main` | branch to apply |
+| `SKIP_DOTFILES` | `0` | skip chezmoi init/apply |
+| `SKIP_MISE` | `0` | skip `mise install` |
+| `SKIP_FISH` | `0` | skip fisher + chsh |
+| `NONINTERACTIVE` | `0` | don't try chsh (CI) |
+
 ## License
 
 MIT — see [LICENSE](./LICENSE).

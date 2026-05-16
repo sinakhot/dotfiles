@@ -1,0 +1,65 @@
+# ~/.config/starship.toml — managed by chezmoi (sinakhot/dotfiles)
+# https://starship.rs/config/
+
+# Inserts a blank line between prompts
+add_newline = true
+
+# Two-line prompt: info on line 1, input on line 2
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$kubernetes\
+$nodejs\
+$python\
+$rust\
+$golang\
+$cmd_duration\
+$line_break\
+$character"""
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold green)"
+
+[directory]
+truncation_length = 4
+truncate_to_repo = true
+style = "bold cyan"
+
+[git_branch]
+symbol = " "
+style = "bold purple"
+
+[git_status]
+style = "bold yellow"
+ahead = "⇡${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+behind = "⇣${count}"
+
+[kubernetes]
+disabled = false
+format = '[ $context](dimmed green) '
+
+[cmd_duration]
+min_time = 2_000
+format = "[$duration](dimmed yellow) "
+
+[hostname]
+ssh_only = true
+format = "[$hostname](bold red) "
+
+[username]
+show_always = false
+style_user = "bold blue"
+
+# Custom: show zellij session when inside one
+[custom.zellij]
+command = "echo $ZELLIJ_SESSION_NAME"
+when = """ test -n "$ZELLIJ_SESSION_NAME" """
+format = "[$symbol($output )]($style)"
+symbol = "Z "
+style = "bold purple"

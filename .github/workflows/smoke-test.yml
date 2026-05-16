@@ -1,0 +1,122 @@
+name: smoke-test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly cron — catches upstream package/regression drift
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+jobs:
+  # ─── Ubuntu (host runner, with chezmoi pointing at the PR/branch HEAD) ───
+  ubuntu:
+    name: ubuntu-${{ matrix.scope }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        scope: [bootstrap-only, with-dotfiles]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run installer (bootstrap only)
+        if: matrix.scope == 'bootstrap-only'
+        env:
+          SKIP_DOTFILES: "1"
+          SKIP_MISE: "1"
+          SKIP_FISH: "1"
+          NONINTERACTIVE: "1"
+        run: bash install.sh
+
+      - name: Run installer (with dotfiles + mise)
+        if: matrix.scope == 'with-dotfiles'
+        env:
+          DOTFILES_REPO: ${{ github.repository }}
+          DOTFILES_BRANCH: ${{ github.head_ref || github.ref_name }}
+          SKIP_FISH: "1"
+          NONINTERACTIVE: "1"
+        run: bash install.sh
+
+      - name: Verify bootstrap tools
+        run: |
+          set -eux
+          export PATH="$HOME/.local/bin:$PATH"
+          command -v fish
+          command -v mise
+          command -v chezmoi
+          fish --version
+          mise --version
+          chezmoi --version
+
+      - name: Verify mise-installed tools
+        if: matrix.scope == 'with-dotfiles'
+        run: |
+          set -eux
+          export PATH="$HOME/.local/bin:$PATH"
+          eval "$(mise activate bash)"
+          mise ls
+          # Spot-check a few tools resolve
+          mise which starship
+          mise which zellij
+          mise which fzf
+          mise which rg
+          mise which gh
+
+  # ─── Arch (container) ────────────────────────────────────────
+  arch:
+    name: arch-bootstrap
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - name: Install prerequisites
+        run: pacman -Syu --noconfirm git sudo
+      - uses: actions/checkout@v4
+      - name: Run installer (bootstrap only)
+        env:
+          SKIP_DOTFILES: "1"
+          SKIP_MISE: "1"
+          SKIP_FISH: "1"
+          NONINTERACTIVE: "1"
+        run: bash install.sh
+      - name: Verify bootstrap tools
+        run: |
+          set -eux
+          export PATH="$HOME/.local/bin:$PATH"
+          command -v fish
+          command -v mise
+          command -v chezmoi
+
+  # ─── macOS ───────────────────────────────────────────────────
+  macos:
+    name: macos-bootstrap
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run installer (bootstrap only)
+        env:
+          SKIP_DOTFILES: "1"
+          SKIP_MISE: "1"
+          SKIP_FISH: "1"
+          NONINTERACTIVE: "1"
+        run: bash install.sh
+      - name: Verify bootstrap tools
+        run: |
+          set -eux
+          export PATH="$HOME/.local/bin:$PATH"
+          command -v fish
+          command -v mise
+          command -v chezmoi
+
+  # ─── Shell lint ──────────────────────────────────────────────
+  shellcheck:
+    name: shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: "."
+          severity: warning
