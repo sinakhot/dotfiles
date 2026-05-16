@@ -11,7 +11,7 @@ python  = "3.12"
 go      = "latest"
 
 # ── Foundation ──────────────────────────────────────────────────
-"ubi:starship-rs/starship"     = "latest"
+"ubi:starship/starship"        = "latest"
 "ubi:zellij-org/zellij"        = "latest"
 "ubi:junegunn/fzf"             = "latest"
 "ubi:ajeetdsouza/zoxide"       = "latest"

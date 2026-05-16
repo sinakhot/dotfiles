@@ -25,6 +25,7 @@ jobs:
       - name: Run installer (bootstrap only)
         if: matrix.scope == 'bootstrap-only'
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SKIP_DOTFILES: "1"
           SKIP_MISE: "1"
           SKIP_FISH: "1"
@@ -34,6 +35,7 @@ jobs:
       - name: Run installer (with dotfiles + mise)
         if: matrix.scope == 'with-dotfiles'
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOTFILES_REPO: ${{ github.repository }}
           DOTFILES_BRANCH: ${{ github.head_ref || github.ref_name }}
           SKIP_FISH: "1"
@@ -76,6 +78,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run installer (bootstrap only)
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SKIP_DOTFILES: "1"
           SKIP_MISE: "1"
           SKIP_FISH: "1"
@@ -97,6 +100,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run installer (bootstrap only)
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SKIP_DOTFILES: "1"
           SKIP_MISE: "1"
           SKIP_FISH: "1"
