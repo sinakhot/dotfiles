@@ -1,0 +1,22 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Secrets — never commit
+.env
+.env.local
+*.pem
+*.key
+id_rsa
+id_ed25519
+
+# chezmoi local state (if test-applying inside repo)
+.chezmoi.toml
+.chezmoiroot
