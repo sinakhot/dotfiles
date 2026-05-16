@@ -17,13 +17,13 @@ go      = "latest"
 "ubi:ajeetdsouza/zoxide"       = "latest"
 
 # ── File / search replacements ──────────────────────────────────
-"ubi:BurntSushi/ripgrep"       = "latest"
+"ubi:BurntSushi/ripgrep"       = { version = "latest", exe = "rg" }
 "ubi:sharkdp/fd"               = "latest"
 "ubi:sharkdp/bat"              = "latest"
 "ubi:eza-community/eza"        = "latest"
 
 # ── Dev / git ───────────────────────────────────────────────────
-"ubi:cli/cli"                  = "latest"  # gh
+"ubi:cli/cli"                  = { version = "latest", exe = "gh" }
 "ubi:direnv/direnv"            = "latest"
 "ubi:jesseduffield/lazygit"    = "latest"
 "ubi:dandavison/delta"         = "latest"
@@ -33,7 +33,7 @@ go      = "latest"
 "ubi:cargo-bins/cargo-binstall" = "latest"
 
 # ── Editor ──────────────────────────────────────────────────────
-"ubi:neovim/neovim"            = "stable"
+"ubi:neovim/neovim"            = { version = "stable", exe = "nvim" }
 
 # ── System monitoring ───────────────────────────────────────────
 "ubi:aristocratos/btop"        = "latest"
@@ -45,7 +45,7 @@ go      = "latest"
 "ubi:jqlang/jq"                = "latest"
 "ubi:mikefarah/yq"             = "latest"
 "ubi:tomnomnom/gron"           = "latest"
-"ubi:johnkerl/miller"          = "latest"
+"ubi:johnkerl/miller"          = { version = "latest", exe = "mlr" }
 
 # ── Task runner ─────────────────────────────────────────────────
 "ubi:go-task/task"             = "latest"
