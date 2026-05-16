@@ -5,13 +5,13 @@ Personal dotfiles + one-shot machine bootstrap for macOS, Ubuntu/Debian, CachyOS
 ## Quick start
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/sinakhot/dotfiles/main/install.sh | bash
+curl -fsSL https://dotfiles.sinakhot.com/install.sh | bash
 ```
 
-Or with custom domain (once Pages + DNS configured):
+Fallback (if custom domain ever 404s):
 
 ```bash
-curl -fsSL https://dotfiles.sinakhot.com/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/sinakhot/dotfiles/main/install.sh | bash
 ```
 
 ## What it installs

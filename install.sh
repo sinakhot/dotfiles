@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # sinakhot/dotfiles installer
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/sinakhot/dotfiles/main/install.sh | bash
-#   curl -fsSL https://dotfiles.sinakhot.com/install.sh | bash   (with custom domain)
+#   curl -fsSL https://dotfiles.sinakhot.com/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/sinakhot/dotfiles/main/install.sh | bash  # fallback
 #
 # Idempotent: safe to re-run. Stages skip if already complete.
 # Supported platforms: macOS, Ubuntu/Debian, CachyOS/Arch, WSL2 Ubuntu.
