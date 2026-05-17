@@ -61,6 +61,7 @@ helm                             = "latest"
 # ── Secrets ─────────────────────────────────────────────────────
 "ubi:getsops/sops"               = "latest"
 "ubi:FiloSottile/age"            = "latest"
+"ubi:funtoo/keychain"            = "latest"
 
 # ── HTTP / reference / benchmark ────────────────────────────────
 "ubi:ducaale/xh"                 = "latest"

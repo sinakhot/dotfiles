@@ -57,7 +57,8 @@ function fish_greeting --description "sinakhot/dotfiles tool dashboard"
 
     __sinakhot_table "Secrets"          \
         sops      "encrypt yaml"        \
-        age       "encryption"
+        age       "encryption"          \
+        keychain  "ssh-agent mgr"
 
     __sinakhot_table "System Monitor"   \
         btop      "process TUI"         \

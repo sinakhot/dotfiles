@@ -39,6 +39,11 @@ if status is-interactive
         direnv hook fish | source
     end
 
+    # keychain — persistent ssh-agent across shells (one agent per boot)
+    if command -q keychain
+        keychain --quiet --eval --agents ssh id_ed25519 | source
+    end
+
     # ──────────────────────────────────────────────────────────
     # Abbreviations (expand on space/enter — visible before send)
     # ──────────────────────────────────────────────────────────
