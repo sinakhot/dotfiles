@@ -10,6 +10,12 @@ fish_add_path -gP \
     /home/linuxbrew/.linuxbrew/bin
 
 # ──────────────────────────────────────────────────────────────
+# Editor — neovim everywhere
+# ──────────────────────────────────────────────────────────────
+set -gx EDITOR nvim
+set -gx VISUAL nvim
+
+# ──────────────────────────────────────────────────────────────
 # Interactive-only setup
 # ──────────────────────────────────────────────────────────────
 if status is-interactive
@@ -57,6 +63,9 @@ if status is-interactive
     abbr -a ll 'eza -lah --git'
     abbr -a lt 'eza --tree --level=2'
     abbr -a cat bat
+
+    abbr -a vim nvim
+    abbr -a vi nvim
 
     # ──────────────────────────────────────────────────────────
     # Greeting — keep quiet
