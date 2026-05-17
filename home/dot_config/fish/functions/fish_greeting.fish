@@ -79,8 +79,9 @@ function fish_greeting --description "sinakhot/dotfiles tool dashboard"
     printf "      %sz%s             attach (or create) session \"default\"\n" $key $reset
     printf "      %sCtrl-g%s        unlock → %sp%s pane  %st%s tab  %sn%s new  %so%s session ops\n" \
         $key $reset $key $reset $key $reset $key $reset $key $reset
-    printf "      %sCtrl-g o d%s    detach (session keeps running)\n" $key $reset
-    printf "      %szls%s           list sessions      %szk%s NAME   kill\n" $key $reset $key $reset
+    printf "      %sCtrl-q%s        detach (session keeps running)\n" $key $reset
+    printf "      %szls%s  list   %szk%s kill   %szd%s delete   %szda%s wipe all\n" \
+        $key $reset $key $reset $key $reset $key $reset
     printf "      %s└─ saves layout + cwds + commands + scrollback%s\n" $desc $reset
     echo
 end

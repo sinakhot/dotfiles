@@ -45,6 +45,8 @@ if status is-interactive
     abbr -a z 'zellij attach -c default'
     abbr -a zls 'zellij list-sessions'
     abbr -a zk 'zellij kill-session'
+    abbr -a zd 'zellij delete-session'
+    abbr -a zda 'zellij delete-all-sessions -y'
 
     abbr -a g git
     abbr -a gs 'git status'
