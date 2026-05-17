@@ -4,6 +4,12 @@
 # Inserts a blank line between prompts
 add_newline = true
 
+# Cwd scan budget (ms). Default 30 is too tight on WSL2 + large repos.
+scan_timeout = 1000
+
+# Whole-prompt budget (ms). Skips slow modules if exceeded.
+command_timeout = 1000
+
 # Two-line prompt: info on line 1, input on line 2
 format = """
 $username\
