@@ -7,7 +7,19 @@ function fish_greeting --description "sinakhot/dotfiles tool dashboard"
     set -l reset (set_color normal)
 
     echo
-    printf "  %ssinakhot/dotfiles%s %s— tools & what they do%s\n" $title $reset $desc $reset
+    printf "  %ssinakhot/dotfiles%s %s— fish + zellij + mise stack%s\n" $title $reset $desc $reset
+    echo
+
+    # ── Hero: zellij = main entry point ──────────────────────────
+    set -l hero (set_color -o magenta)
+    set -l key (set_color -o yellow)
+    printf "  %s▸ Workflow%s\n" $hero $reset
+    printf "      %sz%s              attach (or create) persistent session \"default\"\n" $key $reset
+    printf "      %sCtrl-g%s         unlock → single key:  %sp%s pane  %st%s tab  %sn%s new  %so%s session ops\n" \
+        $key $reset $key $reset $key $reset $key $reset $key $reset
+    printf "      %sCtrl-g o d%s     detach (session keeps running in background)\n" $key $reset
+    printf "      %szls%s            list sessions     %szk%s NAME   kill named session\n" $key $reset $key $reset
+    printf "      %s└─ auto-save every 60s: layout + cwds + commands + scrollback%s\n" $desc $reset
     echo
 
     __sinakhot_section "Shell & Prompt"
