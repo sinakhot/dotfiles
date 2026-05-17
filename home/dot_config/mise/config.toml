@@ -50,6 +50,23 @@ go      = "latest"
 # ── Task runner ─────────────────────────────────────────────────
 "ubi:go-task/task"             = "latest"
 
+# ── Kubernetes ──────────────────────────────────────────────────
+kubectl                          = "latest"
+helm                             = "latest"
+"ubi:derailed/k9s"               = "latest"
+"ubi:ahmetb/kubectx"             = "latest"
+"ubi:stern/stern"                = "latest"
+"ubi:fluxcd/flux2"               = { version = "latest", exe = "flux" }
+
+# ── Secrets ─────────────────────────────────────────────────────
+"ubi:getsops/sops"               = "latest"
+"ubi:FiloSottile/age"            = "latest"
+
+# ── HTTP / reference / benchmark ────────────────────────────────
+"ubi:ducaale/xh"                 = "latest"
+"ubi:tldr-pages/tlrc"            = { version = "latest", exe = "tldr" }
+"ubi:sharkdp/hyperfine"          = "latest"
+
 [settings]
 # Auto-install missing tools when running `mise <cmd>` in a dir with .mise.toml
 not_found_auto_install = true
