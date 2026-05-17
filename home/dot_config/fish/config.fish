@@ -68,7 +68,6 @@ if status is-interactive
     abbr -a vi nvim
 
     # ──────────────────────────────────────────────────────────
-    # Greeting — keep quiet
+    # Greeting — tool dashboard (see functions/fish_greeting.fish)
     # ──────────────────────────────────────────────────────────
-    set -g fish_greeting ""
 end
