@@ -9,8 +9,8 @@ function fish_greeting --description "sinakhot/dotfiles tool dashboard"
 
     __sinakhot_table "Shell & Prompt"   \
         fish      "interactive shell"   \
-        starship  "prompt (k8s, git)"   \
-        zellij    "mux + persistence"   \
+        starship  "prompt (k8s,git)"    \
+        zellij    "mux + persist"       \
         fisher    "fish plugin mgr"
 
     __sinakhot_table "Config Manager"   \
@@ -19,22 +19,22 @@ function fish_greeting --description "sinakhot/dotfiles tool dashboard"
 
     __sinakhot_table "Nav & Search"     \
         fzf       "fuzzy finder"        \
-        zoxide    "smart cd (frecency)" \
-        rg        "fast recursive grep" \
+        zoxide    "smart cd"            \
+        rg        "fast grep"           \
         fd        "fast find"
 
     __sinakhot_table "Read & Diff"      \
-        bat       "cat + syntax color"  \
-        eza       "ls modern (ll/lt)"   \
+        bat       "cat + colors"        \
+        eza       "ls modern"           \
         delta     "git diff pager"      \
-        tldr      "community man pages"
+        tldr      "man cheatsheets"
 
     __sinakhot_table "Git & Dev"        \
         gh        "GitHub CLI"          \
         lazygit   "TUI git client"      \
-        direnv    "per-dir env vars"    \
-        task      "Taskfile.yml runner" \
-        xh        "modern HTTP client"  \
+        direnv    "per-dir env"         \
+        task      "Taskfile runner"     \
+        xh        "HTTP client"         \
         hyperfine "CLI benchmark"
 
     __sinakhot_table "Languages"        \
@@ -45,18 +45,18 @@ function fish_greeting --description "sinakhot/dotfiles tool dashboard"
         cargo-binstall "Rust prebuilts"
 
     __sinakhot_table "Editor"           \
-        nvim      "Neovim (vim aliased)"
+        nvim      "Neovim (vim alias)"
 
     __sinakhot_table "Kubernetes"       \
         kubectl   "k8s CLI"             \
         k9s       "k8s TUI"             \
         kubectx   "switch context"      \
-        stern     "multi-pod log tail"  \
+        stern     "multi-pod logs"      \
         helm      "Helm chart CLI"      \
         flux      "Flux GitOps CLI"
 
     __sinakhot_table "Secrets"          \
-        sops      "edit encrypted yaml" \
+        sops      "encrypted secrets"   \
         age       "file encryption"
 
     __sinakhot_table "System Monitor"   \
@@ -85,7 +85,7 @@ function fish_greeting --description "sinakhot/dotfiles tool dashboard"
     echo
 end
 
-function __sinakhot_table --description "render category as 2-column tool table"
+function __sinakhot_table --description "render category as 3-column tool table"
     set -l section_color (set_color -o blue)
     set -l reset (set_color normal)
 
@@ -95,26 +95,23 @@ function __sinakhot_table --description "render category as 2-column tool table"
     set -l count (count $pairs)
     set -l i 1
     while test $i -le $count
-        set -l name1 $pairs[$i]
-        set -l desc1 $pairs[(math $i + 1)]
-        set -l j (math $i + 2)
-        if test $j -le $count
-            set -l name2 $pairs[$j]
-            set -l desc2 $pairs[(math $j + 1)]
-            __sinakhot_cell $name1 $desc1
-            printf "   "
-            __sinakhot_cell $name2 $desc2
-            echo
-            set i (math $i + 4)
-        else
-            __sinakhot_cell $name1 $desc1
-            echo
-            set i (math $i + 2)
+        printf "    "
+        for col in 1 2 3
+            if test $i -le $count
+                set -l n $pairs[$i]
+                set -l d $pairs[(math $i + 1)]
+                __sinakhot_cell $n $d
+                set i (math $i + 2)
+                if test $col -lt 3
+                    printf "  "
+                end
+            end
         end
+        echo
     end
 end
 
-function __sinakhot_cell --description "render one name+desc cell"
+function __sinakhot_cell --description "render one name+desc cell (no leading indent)"
     set -l name $argv[1]
     set -l description $argv[2]
     set -l ok (set_color -o green)
@@ -123,8 +120,8 @@ function __sinakhot_cell --description "render one name+desc cell"
     set -l reset (set_color normal)
 
     if command -q $name; or functions -q $name
-        printf "    %s%-14s%s %s%-20s%s" $ok $name $reset $desc_color $description $reset
+        printf "%s%-14s%s %s%-18s%s" $ok $name $reset $desc_color $description $reset
     else
-        printf "    %s%-14s%s %s%-20s%s" $miss $name $reset $desc_color $description $reset
+        printf "%s%-14s%s %s%-18s%s" $miss $name $reset $desc_color $description $reset
     end
 end
