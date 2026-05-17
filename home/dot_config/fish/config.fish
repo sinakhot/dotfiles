@@ -75,6 +75,19 @@ if status is-interactive
     abbr -a vi nvim
 
     # ──────────────────────────────────────────────────────────
+    # yazi — file manager with cd-on-quit
+    # `y` opens yazi fullscreen; on quit, shell cd's to last dir
+    # ──────────────────────────────────────────────────────────
+    function y
+        set tmp (mktemp -t "yazi-cwd.XXXXXX")
+        yazi $argv --cwd-file="$tmp"
+        if set cwd (command cat -- "$tmp"); and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
+            builtin cd -- "$cwd"
+        end
+        rm -f -- "$tmp"
+    end
+
+    # ──────────────────────────────────────────────────────────
     # Greeting — tool dashboard (see functions/fish_greeting.fish)
     # ──────────────────────────────────────────────────────────
 end

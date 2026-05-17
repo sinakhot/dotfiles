@@ -159,6 +159,12 @@ keybinds clear-defaults=true {
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
         bind "Alt f" { ToggleFloatingPanes; }
+        bind "Alt y" {
+            Run "yazi" {
+                floating true
+                close_on_exit true
+            }
+        }
         bind "Alt i" { MoveTab "left"; }
         bind "Alt n" { NewPane; }
         bind "Alt o" { MoveTab "right"; }

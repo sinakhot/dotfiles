@@ -21,6 +21,7 @@ go      = "latest"
 "ubi:sharkdp/fd"               = "latest"
 "ubi:sharkdp/bat"              = "latest"
 "ubi:eza-community/eza"        = "latest"
+"ubi:sxyazi/yazi"              = { version = "latest", exe = "yazi" }
 
 # ── Dev / git ───────────────────────────────────────────────────
 "ubi:cli/cli"                  = { version = "latest", exe = "gh" }
