@@ -3,8 +3,10 @@
 // New tab in current session: zellij action new-tab --layout explorer
 
 layout {
-    pane size="22%" {
-        plugin location="zellij:strider"
+    pane split_direction="vertical" {
+        pane size="22%" {
+            plugin location="zellij:strider"
+        }
+        pane
     }
-    pane
 }
