@@ -85,6 +85,12 @@ function fish_greeting --description "sinakhot/dotfiles tool dashboard"
         $key $reset $key $reset $key $reset $key $reset
     printf "      %s└─ saves layout + cwds + commands + scrollback%s\n" $desc $reset
     echo
+    printf "  %s▸ SSH keychain%s %s(one agent per boot, shared across shells)%s\n" $hero $reset $desc $reset
+    printf "      %sssh-add%s        load default keys (~/.ssh/id_*) into agent\n" $key $reset
+    printf "      %sssh-add ~/.ssh/KEY%s   load specific key\n" $key $reset
+    printf "      %sssh-add -l%s     list loaded keys   %sssh-add -D%s  drop all\n" $key $reset $key $reset
+    printf "      %s└─ keys persist until reboot; devcontainers inherit via \$SSH_AUTH_SOCK%s\n" $desc $reset
+    echo
 end
 
 function __sinakhot_table --description "render category as 4-column tool table"

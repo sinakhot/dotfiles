@@ -41,7 +41,9 @@ if status is-interactive
 
     # keychain — persistent ssh-agent across shells (one agent per boot)
     if command -q keychain
-        keychain --quiet --eval --agents ssh id_ed25519 | source
+        keychain --quiet --agents ssh id_ed25519
+        set -l _kc ~/.keychain/(hostname)-fish
+        test -f $_kc; and source $_kc
     end
 
     # ──────────────────────────────────────────────────────────
