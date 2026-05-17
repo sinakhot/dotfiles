@@ -4,7 +4,8 @@ function fish_greeting --description "sinakhot/dotfiles tool dashboard"
     set -l reset (set_color normal)
 
     echo
-    printf "  %ssinakhot/dotfiles%s %s— fish + zellij + mise stack%s\n" $title $reset $desc $reset
+    printf "  %ssinakhot/dotfiles%s %s— fish + zellij + mise stack    %s(type %scheat%s%s to redisplay)%s\n" \
+        $title $reset $desc $desc (set_color -o yellow) $reset $desc $reset
     echo
 
     __sinakhot_table "Shell & Prompt"   \
@@ -98,7 +99,7 @@ function fish_greeting --description "sinakhot/dotfiles tool dashboard"
         $key $reset $key $reset $key $reset $key $reset $key $reset
     printf "      %s/%s find   %sgg%s/%sG%s top/bottom   %sTab%s preview   %sq%s quit\n" \
         $key $reset $key $reset $key $reset $key $reset $key $reset
-    printf "      %s└─ inside yazi: %sz%s zoxide-jump  %scd%s type path  %s~%s home%s\n" $desc $key $desc $key $desc $key $desc $reset
+    printf "      %s└─ %sy%s wrapper writes cwd to tmpfile so shell cd's there on quit%s\n" $desc $key $desc $reset
     echo
 end
 
