@@ -1,47 +1,86 @@
 function fish_greeting --description "sinakhot/dotfiles tool dashboard"
     set -l title (set_color -o cyan)
-    set -l dim (set_color brblack)
-    set -l label (set_color -o blue)
-    set -l ok (set_color green)
-    set -l miss (set_color -o red)
+    set -l section (set_color -o blue)
+    set -l name_ok (set_color -o green)
+    set -l name_miss (set_color -o red)
+    set -l desc (set_color brblack)
     set -l reset (set_color normal)
 
     echo
-    printf "  %ssinakhot/dotfiles%s %s— tools available%s\n" $title $reset $dim $reset
+    printf "  %ssinakhot/dotfiles%s %s— tools & what they do%s\n" $title $reset $desc $reset
     echo
 
-    __sinakhot_row "Shell + Prompt" fish starship zellij fisher
-    __sinakhot_row "Config Manager" chezmoi mise
-    __sinakhot_row "Nav + Search  " fzf zoxide rg fd
-    __sinakhot_row "Read + Diff   " bat eza delta
-    __sinakhot_row "Git + Dev     " gh lazygit direnv task
-    __sinakhot_row "Languages     " node python go uv cargo-binstall
-    __sinakhot_row "Editor        " nvim
-    __sinakhot_row "System Monitor" btop dust duf procs
-    __sinakhot_row "Data Wrangling" jq yq gron mlr
+    __sinakhot_section "Shell & Prompt"
+    __sinakhot_tool fish       "interactive shell"
+    __sinakhot_tool starship   "prompt (k8s ctx, git, langs)"
+    __sinakhot_tool zellij     "multiplexer + session persistence (z=attach)"
+    __sinakhot_tool fisher     "fish plugin manager"
+
+    __sinakhot_section "Config Manager"
+    __sinakhot_tool chezmoi    "dotfile sync (cm=chezmoi, cma=apply, cme=edit)"
+    __sinakhot_tool mise       "tool version manager (node/python/go + ubi)"
+
+    __sinakhot_section "Nav & Search"
+    __sinakhot_tool fzf        "fuzzy finder (Ctrl-T file, Ctrl-R hist, Alt-C cd)"
+    __sinakhot_tool zoxide     "smart cd by frecency (cd foo jumps to learned path)"
+    __sinakhot_tool rg         "ripgrep — fast recursive grep"
+    __sinakhot_tool fd         "fast find alternative (fd pattern)"
+
+    __sinakhot_section "Read & Diff"
+    __sinakhot_tool bat        "cat w/ syntax highlight (alias of cat)"
+    __sinakhot_tool eza        "ls modern (ll=detailed, lt=tree)"
+    __sinakhot_tool delta      "git diff pager (side-by-side, syntax)"
+
+    __sinakhot_section "Git & Dev"
+    __sinakhot_tool gh         "GitHub CLI (PRs, issues, runs)"
+    __sinakhot_tool lazygit    "TUI git client (lg)"
+    __sinakhot_tool direnv     "per-directory env vars (.envrc)"
+    __sinakhot_tool task       "go-task — Taskfile.yml runner"
+
+    __sinakhot_section "Languages"
+    __sinakhot_tool node       "Node.js LTS (via mise)"
+    __sinakhot_tool python     "Python 3.12 (via mise)"
+    __sinakhot_tool go         "Go latest (via mise)"
+    __sinakhot_tool uv         "Python pkg/proj manager (pip+venv+pipx fused)"
+    __sinakhot_tool cargo-binstall "install prebuilt Rust crates fast"
+
+    __sinakhot_section "Editor"
+    __sinakhot_tool nvim       "Neovim — vim/vi aliased; \$EDITOR"
+
+    __sinakhot_section "System Monitor"
+    __sinakhot_tool btop       "process/CPU/mem TUI"
+    __sinakhot_tool dust       "du modern — disk usage tree"
+    __sinakhot_tool duf        "df modern — filesystem usage"
+    __sinakhot_tool procs      "ps modern — colored process list"
+
+    __sinakhot_section "Data Wrangling"
+    __sinakhot_tool jq         "JSON query/transform"
+    __sinakhot_tool yq         "YAML/XML/TOML query (jq-compat)"
+    __sinakhot_tool gron       "flatten JSON to greppable lines"
+    __sinakhot_tool mlr        "miller — awk for CSV/TSV/JSON"
 
     echo
-    printf "  %sabbrs%s  %sz%s=zellij  %sll%s=eza -lah  %slg%s=lazygit  %scm%s=chezmoi  %skgp%s=k get pods\n" \
-        $dim $reset \
-        $ok $reset $ok $reset $ok $reset $ok $reset $ok $reset
+    printf "  %sabbrs%s  z lg ll lt cm cma cme g gs gd gl k kgp kgs vim→nvim\n" $desc $reset
     echo
 end
 
-function __sinakhot_row --description "render one tool category row"
-    set -l label_text $argv[1]
-    set -l tools $argv[2..-1]
-    set -l clabel (set_color -o blue)
-    set -l cok (set_color green)
-    set -l cmiss (set_color -o red)
-    set -l creset (set_color normal)
+function __sinakhot_section --description "category header"
+    set -l section (set_color -o blue)
+    set -l reset (set_color normal)
+    printf "  %s▸ %s%s\n" $section $argv[1] $reset
+end
 
-    printf "  %s%s%s  " $clabel $label_text $creset
-    for t in $tools
-        if command -q $t; or functions -q $t
-            printf "%s%s%s " $cok $t $creset
-        else
-            printf "%s%s%s " $cmiss $t $creset
-        end
+function __sinakhot_tool --description "render one tool + description line"
+    set -l tool $argv[1]
+    set -l description $argv[2]
+    set -l name_ok (set_color -o green)
+    set -l name_miss (set_color -o red)
+    set -l desc_color (set_color brblack)
+    set -l reset (set_color normal)
+
+    if command -q $tool; or functions -q $tool
+        printf "      %s%-16s%s %s%s%s\n" $name_ok $tool $reset $desc_color $description $reset
+    else
+        printf "      %s%-16s%s %s%s (missing)%s\n" $name_miss $tool $reset $desc_color $description $reset
     end
-    echo
 end
