@@ -8,14 +8,14 @@ function fish_greeting --description "sinakhot/dotfiles tool dashboard"
     echo
 
     __sinakhot_table "Shell & Prompt"   \
-        fish      "interactive shell"   \
-        starship  "prompt (k8s,git)"    \
-        zellij    "mux + persist"       \
-        fisher    "fish plugin mgr"
+        fish      "interactive"         \
+        starship  "prompt+k8s"          \
+        zellij    "multiplexer"         \
+        fisher    "plugin mgr"
 
     __sinakhot_table "Config Manager"   \
         chezmoi   "dotfile sync"        \
-        mise      "tool version mgr"
+        mise      "version mgr"
 
     __sinakhot_table "Nav & Search"     \
         fzf       "fuzzy finder"        \
@@ -26,50 +26,50 @@ function fish_greeting --description "sinakhot/dotfiles tool dashboard"
     __sinakhot_table "Read & Diff"      \
         bat       "cat + colors"        \
         eza       "ls modern"           \
-        delta     "git diff pager"      \
-        tldr      "man cheatsheets"
+        delta     "diff pager"          \
+        tldr      "cheatsheets"
 
     __sinakhot_table "Git & Dev"        \
         gh        "GitHub CLI"          \
-        lazygit   "TUI git client"      \
+        lazygit   "git TUI"             \
         direnv    "per-dir env"         \
-        task      "Taskfile runner"     \
+        task      "task runner"         \
         xh        "HTTP client"         \
-        hyperfine "CLI benchmark"
+        hyperfine "benchmark"
 
     __sinakhot_table "Languages"        \
         node      "Node.js LTS"         \
         python    "Python 3.12"         \
         go        "Go latest"           \
-        uv        "Python pkg/proj"     \
-        cargo-binstall "Rust prebuilts"
+        uv        "Py pkg+venv"         \
+        cargo-binstall "Rust crates"
 
     __sinakhot_table "Editor"           \
-        nvim      "Neovim (vim alias)"
+        nvim      "Neovim"
 
     __sinakhot_table "Kubernetes"       \
         kubectl   "k8s CLI"             \
         k9s       "k8s TUI"             \
-        kubectx   "switch context"      \
-        stern     "multi-pod logs"      \
-        helm      "Helm chart CLI"      \
-        flux      "Flux GitOps CLI"
+        kubectx   "ctx switch"          \
+        stern     "multi-pod log"       \
+        helm      "Helm CLI"            \
+        flux      "Flux CLI"
 
     __sinakhot_table "Secrets"          \
-        sops      "encrypted secrets"   \
-        age       "file encryption"
+        sops      "encrypt yaml"        \
+        age       "encryption"
 
     __sinakhot_table "System Monitor"   \
         btop      "process TUI"         \
-        dust      "disk usage tree"     \
-        duf       "filesystem usage"    \
+        dust      "disk usage"          \
+        duf       "fs usage"            \
         procs     "ps modern"
 
     __sinakhot_table "Data Wrangling"   \
         jq        "JSON query"          \
         yq        "YAML query"          \
-        gron      "JSON greppable"      \
-        mlr       "awk for CSV/JSON"
+        gron      "JSON flatten"        \
+        mlr       "CSV awk"
 
     # ── Workflow hero at END so it stays in view ─────────────────
     set -l hero (set_color -o magenta)
@@ -85,7 +85,7 @@ function fish_greeting --description "sinakhot/dotfiles tool dashboard"
     echo
 end
 
-function __sinakhot_table --description "render category as 3-column tool table"
+function __sinakhot_table --description "render category as 4-column tool table"
     set -l section_color (set_color -o blue)
     set -l reset (set_color normal)
 
@@ -96,13 +96,13 @@ function __sinakhot_table --description "render category as 3-column tool table"
     set -l i 1
     while test $i -le $count
         printf "    "
-        for col in 1 2 3
+        for col in 1 2 3 4
             if test $i -le $count
                 set -l n $pairs[$i]
                 set -l d $pairs[(math $i + 1)]
                 __sinakhot_cell $n $d
                 set i (math $i + 2)
-                if test $col -lt 3
+                if test $col -lt 4
                     printf "  "
                 end
             end
@@ -120,8 +120,8 @@ function __sinakhot_cell --description "render one name+desc cell (no leading in
     set -l reset (set_color normal)
 
     if command -q $name; or functions -q $name
-        printf "%s%-14s%s %s%-18s%s" $ok $name $reset $desc_color $description $reset
+        printf "%s%-14s%s %s%-13s%s" $ok $name $reset $desc_color $description $reset
     else
-        printf "%s%-14s%s %s%-18s%s" $miss $name $reset $desc_color $description $reset
+        printf "%s%-14s%s %s%-13s%s" $miss $name $reset $desc_color $description $reset
     end
 end
