@@ -91,6 +91,15 @@ function fish_greeting --description "sinakhot/dotfiles tool dashboard"
     printf "      %sssh-add -l%s     list loaded keys   %sssh-add -D%s  drop all\n" $key $reset $key $reset
     printf "      %s└─ keys persist until reboot; devcontainers inherit via \$SSH_AUTH_SOCK%s\n" $desc $reset
     echo
+    printf "  %s▸ Yazi file manager%s %s(blazing TUI, cd-on-quit)%s\n" $hero $reset $desc $reset
+    printf "      %sy%s             fullscreen yazi; on quit, shell cd's to last dir\n" $key $reset
+    printf "      %sAlt-y%s         floating yazi pane inside zellij (close on exit)\n" $key $reset
+    printf "      %sEnter%s open   %sSpace%s select   %sa%s create   %sd%s trash   %sr%s rename\n" \
+        $key $reset $key $reset $key $reset $key $reset $key $reset
+    printf "      %s/%s find   %sgg%s/%sG%s top/bottom   %sTab%s preview   %sq%s quit\n" \
+        $key $reset $key $reset $key $reset $key $reset $key $reset
+    printf "      %s└─ inside yazi: %sz%s zoxide-jump  %scd%s type path  %s~%s home%s\n" $desc $key $desc $key $desc $key $desc $reset
+    echo
 end
 
 function __sinakhot_table --description "render category as 4-column tool table"
