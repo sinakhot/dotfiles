@@ -97,9 +97,9 @@ pkg_install() {
 stage_bootstrap() {
     info "Stage 1/4: bootstrap (git, curl, fish, mise, chezmoi)"
     case "$OS" in
-        macos)      pkg_install git curl fish ;;
-        ubuntu|wsl) pkg_install git curl ca-certificates build-essential fish ;;
-        arch)       pkg_install git curl base-devel fish ;;
+        macos)      pkg_install git curl fish keychain ;;
+        ubuntu|wsl) pkg_install git curl ca-certificates build-essential fish keychain ;;
+        arch)       pkg_install git curl base-devel fish keychain ;;
     esac
 
     # Register fish in /etc/shells
