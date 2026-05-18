@@ -34,7 +34,7 @@ go      = "latest"
 "ubi:cargo-bins/cargo-binstall" = "latest"
 
 # ── Editor ──────────────────────────────────────────────────────
-"ubi:neovim/neovim"            = { version = "stable", exe = "nvim" }
+"aqua:neovim/neovim"           = "latest"
 
 # ── System monitoring ───────────────────────────────────────────
 "ubi:aristocratos/btop"        = "latest"
