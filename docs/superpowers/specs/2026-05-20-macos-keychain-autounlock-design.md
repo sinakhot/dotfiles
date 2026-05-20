@@ -32,9 +32,11 @@ if [[ ! -f "$PW_FILE" ]]; then
   exec security -i unlock-keychain "$KC"
 fi
 
-security unlock-keychain -p "$(cat "$PW_FILE")" "$KC"
+# Pipe password via stdin (interactive mode) so it never lands in argv / ps output.
+printf '%s' "$(< "$PW_FILE")" | security -i unlock-keychain "$KC"
 ```
 
+- Password is piped via stdin (not passed as `-p` argv) to avoid argv/ps exposure (verify on Mac).
 - Default keychain target is the login keychain; first arg can override.
 - `~/.local/bin` is already on `PATH` (see `config.fish` `fish_add_path`).
 

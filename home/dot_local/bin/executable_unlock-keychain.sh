@@ -8,4 +8,5 @@ if [[ ! -f "$PW_FILE" ]]; then
   exec security -i unlock-keychain "$KC"
 fi
 
-security unlock-keychain -p "$(cat "$PW_FILE")" "$KC"
+# Pipe password via stdin (interactive mode) so it never lands in argv / ps output.
+printf '%s' "$(< "$PW_FILE")" | security -i unlock-keychain "$KC"
