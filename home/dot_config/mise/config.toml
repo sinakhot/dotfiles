@@ -1,7 +1,8 @@
 # ~/.config/mise/config.toml — managed by chezmoi (sinakhot/dotfiles)
 # https://mise.jdx.dev/configuration.html
 #
-# All tools installed as prebuilt binaries via the `ubi` backend.
+# Most tools installed as prebuilt binaries via the `github` backend (formerly `ubi`).
+# Some use `aqua` for cross-platform coverage where upstream lacks macOS releases.
 # `mise install` provisions everything below identically across platforms.
 
 [tools]
@@ -11,64 +12,64 @@ python  = "3.12"
 go      = "latest"
 
 # ── Foundation ──────────────────────────────────────────────────
-"ubi:starship/starship"        = "latest"
-"ubi:zellij-org/zellij"        = "latest"
-"ubi:junegunn/fzf"             = "latest"
-"ubi:ajeetdsouza/zoxide"       = "latest"
+"github:starship/starship"        = "latest"
+"github:zellij-org/zellij"        = "latest"
+"github:junegunn/fzf"             = "latest"
+"github:ajeetdsouza/zoxide"       = "latest"
 
 # ── File / search replacements ──────────────────────────────────
-"ubi:BurntSushi/ripgrep"       = { version = "latest", exe = "rg" }
-"ubi:sharkdp/fd"               = "latest"
-"ubi:sharkdp/bat"              = "latest"
-"ubi:eza-community/eza"        = "latest"
-"ubi:sxyazi/yazi"              = { version = "latest", exe = "yazi" }
+"github:BurntSushi/ripgrep"       = { version = "latest", exe = "rg" }
+"github:sharkdp/fd"               = "latest"
+"github:sharkdp/bat"              = "latest"
+"aqua:eza-community/eza"       = "latest"
+"github:sxyazi/yazi"              = { version = "latest", exe = "yazi" }
 
 # ── Dev / git ───────────────────────────────────────────────────
-"ubi:cli/cli"                  = { version = "latest", exe = "gh" }
-"ubi:direnv/direnv"            = "latest"
-"ubi:jesseduffield/lazygit"    = "latest"
-"ubi:dandavison/delta"         = "latest"
+"github:cli/cli"                  = { version = "latest", exe = "gh" }
+"github:direnv/direnv"            = "latest"
+"github:jesseduffield/lazygit"    = "latest"
+"github:dandavison/delta"         = "latest"
 
 # ── Language ecosystem speedups ─────────────────────────────────
-"ubi:astral-sh/uv"             = "latest"
-"ubi:cargo-bins/cargo-binstall" = "latest"
+"github:astral-sh/uv"             = "latest"
+"github:cargo-bins/cargo-binstall" = "latest"
 
 # ── Editor ──────────────────────────────────────────────────────
 "aqua:neovim/neovim"           = "latest"
 
 # ── System monitoring ───────────────────────────────────────────
-"ubi:aristocratos/btop"        = "latest"
-"ubi:bootandy/dust"            = "latest"
-"ubi:muesli/duf"               = "latest"
-"ubi:dalance/procs"            = "latest"
+"aqua:aristocratos/btop"       = "latest"
+"github:bootandy/dust"            = "latest"
+"github:muesli/duf"               = "latest"
+"github:dalance/procs"            = "latest"
 
 # ── Data wrangling ──────────────────────────────────────────────
-"ubi:jqlang/jq"                = "latest"
-"ubi:mikefarah/yq"             = "latest"
-"ubi:tomnomnom/gron"           = "latest"
-"ubi:johnkerl/miller"          = { version = "latest", exe = "mlr" }
+"github:jqlang/jq"                = "latest"
+"github:mikefarah/yq"             = "latest"
+"github:tomnomnom/gron"           = "latest"
+"github:johnkerl/miller"          = { version = "latest", exe = "mlr" }
 
 # ── Task runner ─────────────────────────────────────────────────
-"ubi:go-task/task"             = "latest"
+"github:go-task/task"             = "latest"
 
 # ── Kubernetes ──────────────────────────────────────────────────
 kubectl                          = "latest"
 helm                             = "latest"
-"ubi:derailed/k9s"               = "latest"
-"ubi:ahmetb/kubectx"             = "latest"
-"ubi:stern/stern"                = "latest"
-"ubi:fluxcd/flux2"               = { version = "latest", exe = "flux" }
+"github:derailed/k9s"               = "latest"
+"github:ahmetb/kubectx"             = "latest"
+"github:stern/stern"                = "latest"
+"github:fluxcd/flux2"               = { version = "latest", exe = "flux" }
 
 # ── Secrets ─────────────────────────────────────────────────────
-"ubi:getsops/sops"               = "latest"
-"ubi:FiloSottile/age"            = "latest"
+"github:getsops/sops"               = "latest"
+"github:FiloSottile/age"            = "latest"
 # keychain: distro pkg (portable shell script, no per-OS binary release).
 # Installed in install.sh stage_bootstrap.
 
 # ── HTTP / reference / benchmark ────────────────────────────────
-"ubi:ducaale/xh"                 = "latest"
-"ubi:tldr-pages/tlrc"            = { version = "latest", exe = "tldr" }
-"ubi:sharkdp/hyperfine"          = "latest"
+"github:ducaale/xh"                 = "latest"
+"github:tldr-pages/tlrc"            = { version = "latest", exe = "tldr" }
+"github:sharkdp/hyperfine"          = "latest"
 
 [settings]
 # Auto-install missing tools when running `mise <cmd>` in a dir with .mise.toml
