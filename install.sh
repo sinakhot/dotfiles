@@ -147,13 +147,33 @@ stage_mise() {
         return
     fi
     info "Stage 3/4: mise tools"
-    if [[ -f "$HOME/.config/mise/config.toml" ]]; then
-        mise trust "$HOME/.config/mise/config.toml" || true
-        mise install
-        ok "Mise tools installed"
-    else
+    if [[ ! -f "$HOME/.config/mise/config.toml" ]]; then
         warn "No ~/.config/mise/config.toml yet — skipping (add it via chezmoi)"
+        return
     fi
+
+    mise trust "$HOME/.config/mise/config.toml" || true
+
+    local mise_log
+    mise_log="$(mktemp)"
+    if mise install 2>&1 | tee "$mise_log"; then
+        ok "Mise tools installed"
+        rm -f "$mise_log"
+        info "Pruning orphaned mise installs…"
+        mise prune || warn "mise prune failed (non-fatal)"
+        return
+    fi
+
+    if grep -qE '403|rate limit|Forbidden' "$mise_log"; then
+        warn "mise hit GitHub API rate limit (unauthenticated = 60 req/hr)"
+        echo
+        echo "  Fix: export a GitHub token, then re-run the installer:"
+        echo "    ${BOLD}export GITHUB_TOKEN=\$(gh auth token)${RESET}   # if gh CLI is installed"
+        echo "    ${BOLD}export GITHUB_TOKEN=ghp_xxx${RESET}              # or paste a PAT from github.com/settings/tokens"
+        echo
+    fi
+    rm -f "$mise_log"
+    fail "mise install failed"
 }
 
 stage_fish() {
