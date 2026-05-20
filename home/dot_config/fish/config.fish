@@ -46,6 +46,11 @@ if status is-interactive
         test -f $_kc; and source $_kc
     end
 
+    # macOS login keychain — auto-unlock from ~/.config/keychain-pw
+    if test (uname) = Darwin; and test -x ~/.local/bin/unlock-keychain.sh
+        ~/.local/bin/unlock-keychain.sh >/dev/null 2>&1
+    end
+
     # ──────────────────────────────────────────────────────────
     # Abbreviations (expand on space/enter — visible before send)
     # ──────────────────────────────────────────────────────────

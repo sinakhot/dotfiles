@@ -73,6 +73,27 @@ chezmoi update --apply   # dotfiles only
 mise upgrade             # tools only
 ```
 
+## macOS login keychain (auto-unlock)
+
+On macOS, interactive shells auto-unlock the login keychain using a password
+read from `~/.config/keychain-pw`. `install.sh` prompts to save it once per
+machine; if the file is missing, the shell falls back to an interactive
+`security` prompt.
+
+Save it manually (one-time, per-machine):
+
+```bash
+mkdir -p ~/.config
+umask 077; read -rsp "login keychain password: " PW; printf "%s" "$PW" > ~/.config/keychain-pw
+chmod 600 ~/.config/keychain-pw
+
+# Verify:
+~/.local/bin/unlock-keychain.sh && echo "unlocked OK"
+```
+
+> `~/.config/keychain-pw` is **per-machine and never committed** (this repo is
+> public). Re-save it if you change your macOS login password.
+
 ## Editing dotfiles
 
 ```bash

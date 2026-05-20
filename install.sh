@@ -111,7 +111,7 @@ install_gh_ubuntu() {
 }
 
 stage_bootstrap() {
-    info "Stage 1/4: bootstrap (git, curl, fish, gh, mise, chezmoi)"
+    info "Stage 1/5: bootstrap (git, curl, fish, gh, mise, chezmoi)"
     case "$OS" in
         macos)      pkg_install git curl fish keychain gh btop eza dust ;;
         ubuntu|wsl)
@@ -147,10 +147,10 @@ stage_bootstrap() {
 
 stage_dotfiles() {
     if [[ "${SKIP_DOTFILES:-0}" == "1" ]]; then
-        warn "Stage 2/4: dotfiles SKIPPED (SKIP_DOTFILES=1)"
+        warn "Stage 2/5: dotfiles SKIPPED (SKIP_DOTFILES=1)"
         return
     fi
-    info "Stage 2/4: dotfiles via chezmoi (repo: $DOTFILES_REPO@$DOTFILES_BRANCH)"
+    info "Stage 2/5: dotfiles via chezmoi (repo: $DOTFILES_REPO@$DOTFILES_BRANCH)"
     if [[ -d "$HOME/.local/share/chezmoi/.git" ]]; then
         info "chezmoi already initialized; updating…"
         chezmoi update --apply
@@ -162,10 +162,10 @@ stage_dotfiles() {
 
 stage_mise() {
     if [[ "${SKIP_MISE:-0}" == "1" ]]; then
-        warn "Stage 3/4: mise install SKIPPED (SKIP_MISE=1)"
+        warn "Stage 3/5: mise install SKIPPED (SKIP_MISE=1)"
         return
     fi
-    info "Stage 3/4: mise tools"
+    info "Stage 3/5: mise tools"
     if [[ ! -f "$HOME/.config/mise/config.toml" ]]; then
         warn "No ~/.config/mise/config.toml yet — skipping (add it via chezmoi)"
         return
@@ -211,10 +211,10 @@ stage_mise() {
 
 stage_fish() {
     if [[ "${SKIP_FISH:-0}" == "1" ]]; then
-        warn "Stage 4/4: fish post-setup SKIPPED (SKIP_FISH=1)"
+        warn "Stage 4/5: fish post-setup SKIPPED (SKIP_FISH=1)"
         return
     fi
-    info "Stage 4/4: fish post-setup"
+    info "Stage 4/5: fish post-setup"
 
     # fisher
     if ! fish -c 'functions -q fisher' 2>/dev/null; then
@@ -242,6 +242,49 @@ stage_fish() {
     ok "Fish configured"
 }
 
+stage_keychain() {
+    if [[ "${SKIP_KEYCHAIN:-0}" == "1" ]]; then
+        warn "Stage 5/5: keychain SKIPPED (SKIP_KEYCHAIN=1)"
+        return
+    fi
+    if [[ "$OS" != "macos" ]]; then
+        return
+    fi
+    info "Stage 5/5: macOS login keychain auto-unlock"
+
+    # Idempotent zsh wiring — append grep-guarded block to ~/.zshrc.
+    local zshrc="$HOME/.zshrc"
+    if ! grep -q 'unlock-keychain.sh' "$zshrc" 2>/dev/null; then
+        info "Wiring keychain auto-unlock into ~/.zshrc"
+        cat >> "$zshrc" <<'ZRC'
+
+# macOS login keychain — auto-unlock from ~/.config/keychain-pw
+if [[ "$(uname)" == "Darwin" && -x ~/.local/bin/unlock-keychain.sh ]]; then
+    ~/.local/bin/unlock-keychain.sh >/dev/null 2>&1
+fi
+ZRC
+    fi
+
+    # One-time password save (interactive only).
+    if [[ -f "$HOME/.config/keychain-pw" ]]; then
+        ok "Keychain password file already present"
+        return
+    fi
+    if [[ "${NONINTERACTIVE:-0}" == "1" || ! -t 0 ]]; then
+        warn "No ~/.config/keychain-pw and not interactive — skipping prompt"
+        info "Save it later: read -rs into ~/.config/keychain-pw (chmod 600)"
+        return
+    fi
+    info "Save your macOS login keychain password (stored per-machine, mode 600)"
+    mkdir -p "$HOME/.config"
+    ( umask 077
+      read -rsp "login keychain password: " PW
+      printf "%s" "$PW" > "$HOME/.config/keychain-pw" )
+    chmod 600 "$HOME/.config/keychain-pw"
+    echo
+    ok "Saved ~/.config/keychain-pw"
+}
+
 # ──────────────────────────────────────────────────────────────
 # Main
 # ──────────────────────────────────────────────────────────────
@@ -256,6 +299,7 @@ main() {
     stage_dotfiles
     stage_mise
     stage_fish
+    stage_keychain
 
     echo
     ok "Setup complete!"
