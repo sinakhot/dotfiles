@@ -29,14 +29,16 @@ PW_FILE="$HOME/.config/keychain-pw"
 
 if [[ ! -f "$PW_FILE" ]]; then
   echo "no password file at $PW_FILE — falling back to interactive prompt" >&2
-  exec security -i unlock-keychain "$KC"
+  exec security unlock-keychain "$KC"
 fi
 
-# Pipe password via stdin (interactive mode) so it never lands in argv / ps output.
-printf '%s' "$(< "$PW_FILE")" | security -i unlock-keychain "$KC"
+security unlock-keychain -p "$(cat "$PW_FILE")" "$KC"
 ```
 
-- Password is piped via stdin (not passed as `-p` argv) to avoid argv/ps exposure (verify on Mac).
+- Uses `-p` to pass the password. (An earlier `security -i` stdin-pipe attempt did
+  NOT work — `-i` is an interactive command shell, so the piped password was ignored
+  and it fell through to a prompt. Brief argv exposure is to the same user only, who
+  can already read `PW_FILE`.)
 - Default keychain target is the login keychain; first arg can override.
 - `~/.local/bin` is already on `PATH` (see `config.fish` `fish_add_path`).
 

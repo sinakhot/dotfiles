@@ -5,8 +5,10 @@ PW_FILE="$HOME/.config/keychain-pw"
 
 if [[ ! -f "$PW_FILE" ]]; then
   echo "no password file at $PW_FILE — falling back to interactive prompt" >&2
-  exec security -i unlock-keychain "$KC"
+  exec security unlock-keychain "$KC"
 fi
 
-# Pipe password via stdin (interactive mode) so it never lands in argv / ps output.
-printf '%s' "$(< "$PW_FILE")" | security -i unlock-keychain "$KC"
+# -p reads password from arg. Brief argv exposure to same user only, who can
+# already read PW_FILE. `security -i` does NOT take a piped password (it is an
+# interactive command shell), so that approach silently fell through to a prompt.
+security unlock-keychain -p "$(cat "$PW_FILE")" "$KC"
