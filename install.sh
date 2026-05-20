@@ -113,7 +113,7 @@ install_gh_ubuntu() {
 stage_bootstrap() {
     info "Stage 1/4: bootstrap (git, curl, fish, gh, mise, chezmoi)"
     case "$OS" in
-        macos)      pkg_install git curl fish keychain gh ;;
+        macos)      pkg_install git curl fish keychain gh btop eza dust ;;
         ubuntu|wsl)
             pkg_install git curl ca-certificates build-essential fish keychain
             command -v gh >/dev/null 2>&1 || install_gh_ubuntu

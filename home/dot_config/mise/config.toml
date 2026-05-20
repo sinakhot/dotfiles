@@ -3,6 +3,8 @@
 #
 # Most tools installed as prebuilt binaries via the `github` backend (formerly `ubi`).
 # Some use `aqua` for cross-platform coverage where upstream lacks macOS releases.
+# Tools with `os = ["linux"]` are linux-only here; macOS provisions them via brew
+# in install.sh stage_bootstrap (btop, eza, dust — no macOS-arm64 prebuilts upstream).
 # `mise install` provisions everything below identically across platforms.
 
 [tools]
@@ -21,7 +23,7 @@ go      = "latest"
 "github:BurntSushi/ripgrep"       = { version = "latest", exe = "rg" }
 "github:sharkdp/fd"               = "latest"
 "github:sharkdp/bat"              = "latest"
-"aqua:eza-community/eza"       = "latest"
+"aqua:eza-community/eza"       = { version = "latest", os = ["linux"] }
 "github:sxyazi/yazi"              = { version = "latest", exe = "yazi" }
 
 # ── Dev / git ───────────────────────────────────────────────────
@@ -38,8 +40,8 @@ go      = "latest"
 "aqua:neovim/neovim"           = "latest"
 
 # ── System monitoring ───────────────────────────────────────────
-"aqua:aristocratos/btop"       = "latest"
-"github:bootandy/dust"            = "latest"
+"aqua:aristocratos/btop"       = { version = "latest", os = ["linux"] }
+"github:bootandy/dust"            = { version = "latest", os = ["linux"] }
 "github:muesli/duf"               = "latest"
 "github:dalance/procs"            = "latest"
 
