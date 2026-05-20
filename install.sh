@@ -94,12 +94,31 @@ pkg_install() {
 # ──────────────────────────────────────────────────────────────
 # Stages
 # ──────────────────────────────────────────────────────────────
+install_gh_ubuntu() {
+    # Ubuntu 22.04+ has `gh` in universe; older needs cli.github.com repo.
+    if sudo_if_needed apt-get install -y gh 2>/dev/null; then
+        return
+    fi
+    info "Adding cli.github.com apt repo for gh…"
+    sudo_if_needed mkdir -p -m 755 /etc/apt/keyrings
+    curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+        | sudo_if_needed tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null
+    sudo_if_needed chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+        | sudo_if_needed tee /etc/apt/sources.list.d/github-cli.list >/dev/null
+    sudo_if_needed apt-get update -qq
+    sudo_if_needed apt-get install -y gh
+}
+
 stage_bootstrap() {
-    info "Stage 1/4: bootstrap (git, curl, fish, mise, chezmoi)"
+    info "Stage 1/4: bootstrap (git, curl, fish, gh, mise, chezmoi)"
     case "$OS" in
-        macos)      pkg_install git curl fish keychain ;;
-        ubuntu|wsl) pkg_install git curl ca-certificates build-essential fish keychain ;;
-        arch)       pkg_install git curl base-devel fish keychain ;;
+        macos)      pkg_install git curl fish keychain gh ;;
+        ubuntu|wsl)
+            pkg_install git curl ca-certificates build-essential fish keychain
+            command -v gh >/dev/null 2>&1 || install_gh_ubuntu
+            ;;
+        arch)       pkg_install git curl base-devel fish keychain github-cli ;;
     esac
 
     # Register fish in /etc/shells
@@ -154,6 +173,15 @@ stage_mise() {
 
     mise trust "$HOME/.config/mise/config.toml" || true
 
+    # Auto-export GITHUB_TOKEN from gh CLI if available (avoids rate limit)
+    if [[ -z "${GITHUB_TOKEN:-}" ]] && command -v gh >/dev/null 2>&1; then
+        local gh_token
+        if gh_token="$(gh auth token 2>/dev/null)" && [[ -n "$gh_token" ]]; then
+            export GITHUB_TOKEN="$gh_token"
+            info "Using GITHUB_TOKEN from gh auth (avoids GitHub rate limit)"
+        fi
+    fi
+
     local mise_log
     mise_log="$(mktemp)"
     if mise install 2>&1 | tee "$mise_log"; then
@@ -167,9 +195,14 @@ stage_mise() {
     if grep -qE '403|rate limit|Forbidden' "$mise_log"; then
         warn "mise hit GitHub API rate limit (unauthenticated = 60 req/hr)"
         echo
-        echo "  Fix: export a GitHub token, then re-run the installer:"
-        echo "    ${BOLD}export GITHUB_TOKEN=\$(gh auth token)${RESET}   # if gh CLI is installed"
-        echo "    ${BOLD}export GITHUB_TOKEN=ghp_xxx${RESET}              # or paste a PAT from github.com/settings/tokens"
+        if command -v gh >/dev/null 2>&1; then
+            echo "  Fix: authenticate gh, then re-run the installer:"
+            echo "    ${BOLD}gh auth login${RESET}"
+            echo "    ${BOLD}bash install.sh${RESET}   # token auto-exported via gh"
+        else
+            echo "  Fix: export a GitHub token, then re-run the installer:"
+            echo "    ${BOLD}export GITHUB_TOKEN=ghp_xxx${RESET}   # PAT from github.com/settings/tokens"
+        fi
         echo
     fi
     rm -f "$mise_log"
