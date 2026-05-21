@@ -31,6 +31,9 @@ go      = "latest"
 "github:direnv/direnv"            = "latest"
 "github:jesseduffield/lazygit"    = "latest"
 "github:dandavison/delta"         = "latest"
+# devpod: aqua picks the raw `devpod-<os>-<arch>` CLI binary. The github/ubi
+# backend wrongly selects the desktop bundle (DevPod_*.tar.gz → dev-pod-desktop).
+"aqua:loft-sh/devpod"             = "latest"
 
 # ── Language ecosystem speedups ─────────────────────────────────
 "github:astral-sh/uv"             = "latest"
