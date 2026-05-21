@@ -121,6 +121,10 @@ stage_bootstrap() {
         arch)       pkg_install git curl base-devel fish keychain github-cli ;;
     esac
 
+    # WSL: wslu provides `wslview` so xdg-open / $BROWSER opens the
+    # Windows default browser (e.g. gh OAuth) instead of falling back to lynx.
+    [[ "$OS" == "wsl" ]] && pkg_install wslu
+
     # Register fish in /etc/shells
     local fish_path
     fish_path="$(command -v fish)"
