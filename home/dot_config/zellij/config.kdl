@@ -313,10 +313,29 @@ web_client {
 // 
 // osc8_hyperlinks true
  
+// Custom theme: catppuccin-macchiato palette with a near-black background.
+// Mirrors zellij's built-in catppuccin-macchiato color mapping, but overrides
+// `bg` to #010101 for a near-black pane background.
+themes {
+    catppuccin-macchiato-black {
+        fg "#cad3f5"
+        bg "#010101"
+        black "#1e2030"
+        red "#ed8796"
+        green "#a6da95"
+        yellow "#eed49f"
+        blue "#8aadf4"
+        magenta "#f5bde6"
+        cyan "#8bd5ca"
+        white "#cad3f5"
+        orange "#f5a97f"
+    }
+}
+
 // Choose the theme that is specified in the themes section.
 // Default: default
 //
-theme "catppuccin-macchiato"
+theme "catppuccin-macchiato-black"
  
 // Theme to use when the host terminal reports a dark color palette.
 // Requires `theme_light` to also be set; otherwise `theme` is used.
