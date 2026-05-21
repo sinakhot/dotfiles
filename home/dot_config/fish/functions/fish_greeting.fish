@@ -101,6 +101,15 @@ function fish_greeting --description "sinakhot/dotfiles tool dashboard"
         $key $reset $key $reset $key $reset $key $reset $key $reset
     printf "      %s└─ %sy%s wrapper writes cwd to tmpfile so shell cd's there on quit%s\n" $desc $key $desc $reset
     echo
+    printf "  %s▸ DevPod%s %s(devcontainers anywhere — docker/k8s/cloud backends)%s\n" $hero $reset $desc $reset
+    printf "      %sdevpod provider add docker%s   one-time: register a backend\n" $key $reset
+    printf "      %sdevpod up .%s          start/attach a workspace from this repo\n" $key $reset
+    printf "      %sdevpod up REPO_URL%s   spin one up straight from a git URL\n" $key $reset
+    printf "      %sdevpod ssh NAME%s      ssh in   %sdevpod list%s  list   %sdevpod status NAME%s  state\n" \
+        $key $reset $key $reset $key $reset
+    printf "      %sdevpod stop NAME%s     stop (keep)   %sdevpod delete NAME%s  remove\n" $key $reset $key $reset
+    printf "      %s└─ reads .devcontainer/; keychain creds work via ~/.ssh/rc unlock%s\n" $desc $reset
+    echo
 end
 
 function __sinakhot_table --description "render category as 4-column tool table"
