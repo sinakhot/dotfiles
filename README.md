@@ -31,6 +31,7 @@ curl -fsSL https://raw.githubusercontent.com/sinakhot/dotfiles/main/install.sh |
 | Foundation | fzf, zoxide |
 | File / search | ripgrep, fd, bat, eza |
 | Dev / git | gh, direnv, lazygit, delta |
+| Dev containers | devpod |
 | Language mgmt | uv (Python), cargo-binstall |
 | Editor | neovim (LazyVim) |
 | System monitor | btop, dust, duf, procs |
@@ -44,12 +45,13 @@ curl -fsSL https://raw.githubusercontent.com/sinakhot/dotfiles/main/install.sh |
 
 ## Design
 
-Four stages, idempotent — safe to re-run:
+Five stages, idempotent — safe to re-run:
 
 1. **Bootstrap** — distro package manager installs git/curl/fish/mise/chezmoi
 2. **Dotfiles** — `chezmoi init --apply sinakhot/dotfiles` clones + applies configs
-3. **Tools** — `mise install` reads `~/.config/mise/config.toml` and provisions 22 tools as prebuilt binaries
+3. **Tools** — `mise install` reads `~/.config/mise/config.toml` and provisions every pinned tool as a prebuilt binary
 4. **Fish** — fisher + chsh
+5. **Keychain** (macOS only) — saves the login-keychain password for `~/.ssh/rc` auto-unlock
 
 Single source of truth = `~/.config/mise/config.toml` (managed by chezmoi). One file pins every tool version across every machine.
 

@@ -17,14 +17,15 @@ tool versions + config changes.
 
 ## Design
 
-Four sequential stages in `install.sh`, each guarded by a `SKIP_*` env var:
+Five sequential stages in `install.sh`, each guarded by a `SKIP_*` env var:
 
 | Stage | Action | Skip flag |
 |---|---|---|
 | 1 | Bootstrap system pkgs: `git`, `curl`, `fish`, `mise`, `chezmoi` | (always runs) |
 | 2 | `chezmoi init --apply sinakhot/dotfiles` → applies `home/dot_config/*` | `SKIP_DOTFILES=1` |
-| 3 | `mise install` → 22 tools as prebuilt binaries (ubi backend) | `SKIP_MISE=1` |
+| 3 | `mise install` → all pinned tools as prebuilt binaries (github/aqua backends) | `SKIP_MISE=1` |
 | 4 | fisher + `chsh -s fish` | `SKIP_FISH=1` |
+| 5 | macOS only: save login-keychain password for `~/.ssh/rc` auto-unlock | `SKIP_KEYCHAIN=1` |
 
 **Single source of truth:** `home/dot_config/mise/config.toml` pins every tool
 version. One file change → reproducible across every machine.
@@ -40,11 +41,18 @@ version. One file change → reproducible across every machine.
 ├── LICENSE                       # MIT
 ├── .chezmoiroot                  # tells chezmoi source is home/
 ├── home/                         # chezmoi source — `dot_X` → `~/.X`
+│   ├── private_dot_ssh/
+│   │   └── rc                    # → ~/.ssh/rc (700 dir; macOS keychain unlock per SSH session)
 │   └── dot_config/
 │       ├── fish/config.fish      # → ~/.config/fish/config.fish
+│       ├── fish/functions/       # greeting dashboard, helper fns
 │       ├── starship.toml         # → ~/.config/starship.toml
 │       ├── zellij/config.kdl     # → ~/.config/zellij/config.kdl
+│       ├── alacritty/alacritty.toml  # → ~/.config/alacritty/ (catppuccin-macchiato, #010101 bg)
+│       ├── yazi/                 # → ~/.config/yazi/
+│       ├── nvim/                 # → ~/.config/nvim/
 │       └── mise/config.toml      # → ~/.config/mise/config.toml
+├── docs/superpowers/             # design specs + implementation plans
 └── .github/workflows/
     └── smoke-test.yml            # CI on push/PR/weekly
 ```
