@@ -1,0 +1,22 @@
+#!/bin/sh
+# ~/.ssh/rc — managed by chezmoi (sinakhot/dotfiles)
+#
+# sshd runs this after authentication, before the user's shell or command, for
+# EVERY session — any auth method (incl. public key), interactive or not. We use
+# it to unlock the macOS login keychain once per SSH session so keychain-backed
+# tools (docker credential helper, ssh-agent / UseKeychain, git osxkeychain,
+# Claude Code, VS Code Remote-SSH + devcontainers) work over key-based SSH.
+#
+# MUST NOT write to stdout — sshd passes the X11 proto cookie there; any output
+# breaks forwarding. Send everything to /dev/null and always exit 0.
+[ "$(uname)" = Darwin ] || exit 0
+
+PW_FILE="$HOME/.config/keychain-pw"
+KC="$HOME/Library/Keychains/login.keychain-db"
+if [ -f "$PW_FILE" ]; then
+    security unlock-keychain -p "$(cat "$PW_FILE")" "$KC" >/dev/null 2>&1
+    # Drop the inactivity/sleep auto-lock so long-lived sessions (e.g. a VS Code
+    # server) don't hit a re-lock mid-session.
+    security set-keychain-settings "$KC" >/dev/null 2>&1
+fi
+exit 0

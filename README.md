@@ -75,12 +75,21 @@ mise upgrade             # tools only
 
 ## macOS login keychain (auto-unlock)
 
-On macOS, interactive shells auto-unlock the login keychain using a password
-read from `~/.config/keychain-pw`. `install.sh` prompts to save it once per
-machine; if the file is missing, the shell falls back to an interactive
-`security` prompt.
+On macOS, the login keychain is unlocked at the start of **every SSH session**
+via the chezmoi-managed `~/.ssh/rc` (sshd runs it after auth — any auth method,
+interactive or not). One unlock covers everything in that session: the docker
+credential helper, ssh-agent / `UseKeychain`, git's osxkeychain helper, Claude
+Code, and VS Code Remote-SSH + devcontainers. It reads the password from
+`~/.config/keychain-pw` and disables the inactivity auto-lock so long-lived
+sessions don't re-lock. `install.sh` prompts to save the password once per
+machine.
 
-Save it manually (one-time, per-machine):
+> Why `~/.ssh/rc` and not a shell hook: SSH sessions each get their own locked
+> keychain, and VS Code's server/devcontainer processes aren't started from your
+> interactive shell — so a `config.fish`/`.zshrc` hook never reaches them.
+> `~/.ssh/rc` runs in every session before the shell or command.
+
+Save the password manually (one-time, per-machine):
 
 ```bash
 mkdir -p ~/.config

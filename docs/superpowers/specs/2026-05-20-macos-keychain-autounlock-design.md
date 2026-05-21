@@ -130,3 +130,35 @@ Stage ordering: runs after dotfiles are applied (so the script exists at
 
 - Managing `~/.zshrc` wholesale via chezmoi.
 - Non-login keychains (overridable via the script's first arg, not automated).
+
+## Amendment (2026-05-20): switch to `~/.ssh/rc`
+
+The interactive shell hook (components 2 & 3) only unlocks for interactive
+fish/zsh sessions. It does **not** cover SSH-driven workloads — docker's
+credential helper, ssh-agent, git's osxkeychain helper, Claude Code, and VS Code
+Remote-SSH + devcontainers — because:
+
+- macOS scopes keychain unlock to the login/security session; each SSH session
+  starts with the login keychain locked (confirmed: Apple Developer Forums; on
+  Apple Silicon SSH sessions may not even see `login.keychain-db`).
+- VS Code's server and the devcontainer CLI are `execve`'d by the server, never
+  sourcing the user's shell rc — so no shell hook (interactive or not) runs in
+  that process chain.
+
+**Resolution:** unlock once per SSH session via a chezmoi-managed `~/.ssh/rc`.
+sshd runs `~/.ssh/rc` after authentication, before the shell or command, for
+every session and every auth method (incl. public key). Unlocking there opens
+the keychain for all processes in that session. It also runs
+`security set-keychain-settings` to drop the inactivity auto-lock so long-lived
+sessions (e.g. a VS Code server) don't re-lock.
+
+Changes from the original design:
+
+- **New:** `home/private_dot_ssh/rc` → `~/.ssh/rc` (700 dir via `private_`),
+  Darwin-guarded, no-stdout (sshd X11 constraint), reads `~/.config/keychain-pw`.
+- **Removed:** the interactive fish hook (component 2) and the `install.sh`
+  `~/.zshrc` append (component 3). `stage_keychain` now only saves the password.
+- **Kept:** `~/.local/bin/unlock-keychain.sh` as a manual helper; the
+  `~/.config/keychain-pw` password file and its `install.sh` prompt (component 4);
+  secrets handling (component 5).
+- **Requires:** `PermitUserRC yes` in sshd_config (the default).

@@ -252,18 +252,10 @@ stage_keychain() {
     fi
     info "Stage 5/5: macOS login keychain auto-unlock"
 
-    # Idempotent zsh wiring — append grep-guarded block to ~/.zshrc.
-    local zshrc="$HOME/.zshrc"
-    if ! grep -q 'unlock-keychain.sh' "$zshrc" 2>/dev/null; then
-        info "Wiring keychain auto-unlock into ~/.zshrc"
-        cat >> "$zshrc" <<'ZRC'
-
-# macOS login keychain — auto-unlock from ~/.config/keychain-pw
-if [[ "$(uname)" == "Darwin" && -x ~/.local/bin/unlock-keychain.sh ]]; then
-    ~/.local/bin/unlock-keychain.sh >/dev/null 2>&1
-fi
-ZRC
-    fi
+    # Unlocking is wired via the chezmoi-managed ~/.ssh/rc, which sshd runs at
+    # the start of every SSH session (any auth method, interactive or not) so
+    # keychain-backed tools work over key-based SSH. This stage only saves the
+    # per-machine password file that ~/.ssh/rc reads.
 
     # One-time password save (interactive only).
     if [[ -f "$HOME/.config/keychain-pw" ]]; then
