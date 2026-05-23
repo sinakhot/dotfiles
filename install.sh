@@ -14,9 +14,10 @@ set -euo pipefail
 #   DOTFILES_REPO    — chezmoi source repo (default: sinakhot/dotfiles)
 #   DOTFILES_BRANCH  — branch to apply (default: main)
 #   SKIP_DOTFILES=1  — skip chezmoi init/apply stage
+#   SKIP_GH_AUTH=1   — skip gh auth status + scope check
 #   SKIP_MISE=1      — skip `mise install` stage
 #   SKIP_FISH=1      — skip fish post-setup (fisher + chsh)
-#   NONINTERACTIVE=1 — don't try chsh (CI runners can't take stdin)
+#   NONINTERACTIVE=1 — don't try chsh / gh auth login (CI runners can't take stdin)
 # ──────────────────────────────────────────────────────────────
 DOTFILES_REPO="${DOTFILES_REPO:-sinakhot/dotfiles}"
 DOTFILES_BRANCH="${DOTFILES_BRANCH:-main}"
@@ -111,7 +112,7 @@ install_gh_ubuntu() {
 }
 
 stage_bootstrap() {
-    info "Stage 1/5: bootstrap (git, curl, fish, gh, mise, chezmoi)"
+    info "Stage 1/6: bootstrap (git, curl, fish, gh, mise, chezmoi)"
     case "$OS" in
         macos)      pkg_install git curl fish keychain gh btop eza dust ;;
         ubuntu|wsl)
@@ -151,10 +152,10 @@ stage_bootstrap() {
 
 stage_dotfiles() {
     if [[ "${SKIP_DOTFILES:-0}" == "1" ]]; then
-        warn "Stage 2/5: dotfiles SKIPPED (SKIP_DOTFILES=1)"
+        warn "Stage 2/6: dotfiles SKIPPED (SKIP_DOTFILES=1)"
         return
     fi
-    info "Stage 2/5: dotfiles via chezmoi (repo: $DOTFILES_REPO@$DOTFILES_BRANCH)"
+    info "Stage 2/6: dotfiles via chezmoi (repo: $DOTFILES_REPO@$DOTFILES_BRANCH)"
     if [[ -d "$HOME/.local/share/chezmoi/.git" ]]; then
         info "chezmoi already initialized; updating…"
         chezmoi update --apply
@@ -164,12 +165,84 @@ stage_dotfiles() {
     ok "Dotfiles applied"
 }
 
-stage_mise() {
-    if [[ "${SKIP_MISE:-0}" == "1" ]]; then
-        warn "Stage 3/5: mise install SKIPPED (SKIP_MISE=1)"
+stage_gh_auth() {
+    if [[ "${SKIP_GH_AUTH:-0}" == "1" ]]; then
+        warn "Stage 3/6: gh auth SKIPPED (SKIP_GH_AUTH=1)"
         return
     fi
-    info "Stage 3/5: mise tools"
+    info "Stage 3/6: gh auth status + scopes"
+
+    if ! command -v gh >/dev/null 2>&1; then
+        warn "gh not installed; skipping auth check"
+        return
+    fi
+
+    local required_scopes=(repo read:org read:packages gist)
+    local interactive=1
+    [[ "${NONINTERACTIVE:-0}" == "1" || ! -t 0 ]] && interactive=0
+
+    local auth_out
+    if ! auth_out="$(gh auth status -h github.com 2>&1)"; then
+        if [[ "$interactive" == "0" ]]; then
+            warn "gh not authenticated; non-interactive — skipping login"
+            info "Run later: gh auth login -h github.com -s $(IFS=,; echo "${required_scopes[*]}")"
+            return
+        fi
+        info "gh not authenticated; running gh auth login…"
+        gh auth login -h github.com -s "$(IFS=,; echo "${required_scopes[*]}")" \
+            || fail "gh auth login failed"
+        auth_out="$(gh auth status -h github.com 2>&1)" || fail "gh auth status failed after login"
+    fi
+
+    # Parse "Token scopes: 'a', 'b', 'c'" line
+    local scopes_line current_scopes
+    scopes_line="$(echo "$auth_out" | grep -E 'Token scopes:' | head -n1 || true)"
+    current_scopes="$(echo "$scopes_line" | grep -oE "'[^']+'" | tr -d "'" | tr '\n' ' ')"
+
+    # GitHub scope hierarchy: admin:X ⊇ write:X ⊇ read:X.
+    # `repo` umbrella covers repo:status, repo_deployment, public_repo, repo:invite, security_events.
+    # `user` covers read:user, user:email, user:follow.
+    scope_satisfied() {
+        local want="$1" have="$2"
+        grep -qw "$want" <<<"$have" && return 0
+        case "$want" in
+            read:*)  grep -qwE "write:${want#read:}|admin:${want#read:}" <<<"$have" && return 0 ;;
+            write:*) grep -qw "admin:${want#write:}" <<<"$have" && return 0 ;;
+            repo:status|repo_deployment|public_repo|repo:invite|security_events)
+                     grep -qw "repo" <<<"$have" && return 0 ;;
+            read:user|user:email|user:follow)
+                     grep -qw "user" <<<"$have" && return 0 ;;
+        esac
+        return 1
+    }
+
+    local missing=() s
+    for s in "${required_scopes[@]}"; do
+        scope_satisfied "$s" "$current_scopes" || missing+=("$s")
+    done
+
+    if (( ${#missing[@]} == 0 )); then
+        ok "gh authenticated with required scopes"
+        return
+    fi
+
+    warn "Missing gh scopes: ${missing[*]}"
+    if [[ "$interactive" == "0" ]]; then
+        info "Run later: gh auth refresh -h github.com -s $(IFS=,; echo "${missing[*]}")"
+        return
+    fi
+    info "Refreshing token to add missing scopes…"
+    gh auth refresh -h github.com -s "$(IFS=,; echo "${missing[*]}")" \
+        || fail "gh auth refresh failed"
+    ok "gh scopes updated"
+}
+
+stage_mise() {
+    if [[ "${SKIP_MISE:-0}" == "1" ]]; then
+        warn "Stage 4/6: mise install SKIPPED (SKIP_MISE=1)"
+        return
+    fi
+    info "Stage 4/6: mise tools"
     if [[ ! -f "$HOME/.config/mise/config.toml" ]]; then
         warn "No ~/.config/mise/config.toml yet — skipping (add it via chezmoi)"
         return
@@ -215,10 +288,10 @@ stage_mise() {
 
 stage_fish() {
     if [[ "${SKIP_FISH:-0}" == "1" ]]; then
-        warn "Stage 4/5: fish post-setup SKIPPED (SKIP_FISH=1)"
+        warn "Stage 5/6: fish post-setup SKIPPED (SKIP_FISH=1)"
         return
     fi
-    info "Stage 4/5: fish post-setup"
+    info "Stage 5/6: fish post-setup"
 
     # fisher
     if ! fish -c 'functions -q fisher' 2>/dev/null; then
@@ -248,13 +321,13 @@ stage_fish() {
 
 stage_keychain() {
     if [[ "${SKIP_KEYCHAIN:-0}" == "1" ]]; then
-        warn "Stage 5/5: keychain SKIPPED (SKIP_KEYCHAIN=1)"
+        warn "Stage 6/6: keychain SKIPPED (SKIP_KEYCHAIN=1)"
         return
     fi
     if [[ "$OS" != "macos" ]]; then
         return
     fi
-    info "Stage 5/5: macOS login keychain auto-unlock"
+    info "Stage 6/6: macOS login keychain auto-unlock"
 
     # Unlocking is wired via the chezmoi-managed ~/.ssh/rc, which sshd runs at
     # the start of every SSH session (any auth method, interactive or not) so
@@ -293,6 +366,7 @@ main() {
 
     stage_bootstrap
     stage_dotfiles
+    stage_gh_auth
     stage_mise
     stage_fish
     stage_keychain

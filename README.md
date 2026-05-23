@@ -45,13 +45,14 @@ curl -fsSL https://raw.githubusercontent.com/sinakhot/dotfiles/main/install.sh |
 
 ## Design
 
-Five stages, idempotent — safe to re-run:
+Six stages, idempotent — safe to re-run:
 
-1. **Bootstrap** — distro package manager installs git/curl/fish/mise/chezmoi
+1. **Bootstrap** — distro package manager installs git/curl/fish/gh/mise/chezmoi
 2. **Dotfiles** — `chezmoi init --apply sinakhot/dotfiles` clones + applies configs
-3. **Tools** — `mise install` reads `~/.config/mise/config.toml` and provisions every pinned tool as a prebuilt binary
-4. **Fish** — fisher + chsh
-5. **Keychain** (macOS only) — saves the login-keychain password for `~/.ssh/rc` auto-unlock
+3. **gh auth** — verify `gh auth status` + required scopes (`repo,read:org,read:packages,gist`); runs `gh auth login` / `gh auth refresh` if missing
+4. **Tools** — `mise install` reads `~/.config/mise/config.toml` and provisions every pinned tool as a prebuilt binary
+5. **Fish** — fisher + chsh
+6. **Keychain** (macOS only) — saves the login-keychain password for `~/.ssh/rc` auto-unlock
 
 Single source of truth = `~/.config/mise/config.toml` (managed by chezmoi). One file pins every tool version across every machine.
 
@@ -138,9 +139,10 @@ chezmoi cd               # jump into source dir, git push when ready
 | `DOTFILES_REPO` | `sinakhot/dotfiles` | chezmoi source repo |
 | `DOTFILES_BRANCH` | `main` | branch to apply |
 | `SKIP_DOTFILES` | `0` | skip chezmoi init/apply |
+| `SKIP_GH_AUTH` | `0` | skip `gh auth status` + scope check |
 | `SKIP_MISE` | `0` | skip `mise install` |
 | `SKIP_FISH` | `0` | skip fisher + chsh |
-| `NONINTERACTIVE` | `0` | don't try chsh (CI) |
+| `NONINTERACTIVE` | `0` | don't try chsh / `gh auth login` (CI) |
 
 ## License
 

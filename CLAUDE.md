@@ -17,15 +17,16 @@ tool versions + config changes.
 
 ## Design
 
-Five sequential stages in `install.sh`, each guarded by a `SKIP_*` env var:
+Six sequential stages in `install.sh`, each guarded by a `SKIP_*` env var:
 
 | Stage | Action | Skip flag |
 |---|---|---|
-| 1 | Bootstrap system pkgs: `git`, `curl`, `fish`, `mise`, `chezmoi` | (always runs) |
+| 1 | Bootstrap system pkgs: `git`, `curl`, `fish`, `gh`, `mise`, `chezmoi` | (always runs) |
 | 2 | `chezmoi init --apply sinakhot/dotfiles` → applies `home/dot_config/*` | `SKIP_DOTFILES=1` |
-| 3 | `mise install` → all pinned tools as prebuilt binaries (github/aqua backends) | `SKIP_MISE=1` |
-| 4 | fisher + `chsh -s fish` | `SKIP_FISH=1` |
-| 5 | macOS only: save login-keychain password for `~/.ssh/rc` auto-unlock | `SKIP_KEYCHAIN=1` |
+| 3 | `gh auth status` + scopes `repo,read:org,read:packages,gist`; logs in / refreshes if missing | `SKIP_GH_AUTH=1` |
+| 4 | `mise install` → all pinned tools as prebuilt binaries (github/aqua backends) | `SKIP_MISE=1` |
+| 5 | fisher + `chsh -s fish` | `SKIP_FISH=1` |
+| 6 | macOS only: save login-keychain password for `~/.ssh/rc` auto-unlock | `SKIP_KEYCHAIN=1` |
 
 **Single source of truth:** `home/dot_config/mise/config.toml` pins every tool
 version. One file change → reproducible across every machine.
