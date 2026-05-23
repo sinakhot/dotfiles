@@ -194,10 +194,11 @@ stage_gh_auth() {
         auth_out="$(gh auth status -h github.com 2>&1)" || fail "gh auth status failed after login"
     fi
 
-    # Parse "Token scopes: 'a', 'b', 'c'" line
+    # Parse "Token scopes: 'a', 'b', 'c'" line.
+    # GITHUB_TOKEN env auth (CI) returns no scope line — current_scopes stays empty.
     local scopes_line current_scopes
     scopes_line="$(echo "$auth_out" | grep -E 'Token scopes:' | head -n1 || true)"
-    current_scopes="$(echo "$scopes_line" | grep -oE "'[^']+'" | tr -d "'" | tr '\n' ' ')"
+    current_scopes="$(echo "$scopes_line" | grep -oE "'[^']+'" | tr -d "'" | tr '\n' ' ' || true)"
 
     # GitHub scope hierarchy: admin:X ⊇ write:X ⊇ read:X.
     # `repo` umbrella covers repo:status, repo_deployment, public_repo, repo:invite, security_events.
@@ -206,12 +207,12 @@ stage_gh_auth() {
         local want="$1" have="$2"
         grep -qw "$want" <<<"$have" && return 0
         case "$want" in
-            read:*)  grep -qwE "write:${want#read:}|admin:${want#read:}" <<<"$have" && return 0 ;;
-            write:*) grep -qw "admin:${want#write:}" <<<"$have" && return 0 ;;
-            repo:status|repo_deployment|public_repo|repo:invite|security_events)
-                     grep -qw "repo" <<<"$have" && return 0 ;;
             read:user|user:email|user:follow)
                      grep -qw "user" <<<"$have" && return 0 ;;
+            repo:status|repo_deployment|public_repo|repo:invite|security_events)
+                     grep -qw "repo" <<<"$have" && return 0 ;;
+            read:*)  grep -qwE "write:${want#read:}|admin:${want#read:}" <<<"$have" && return 0 ;;
+            write:*) grep -qw "admin:${want#write:}" <<<"$have" && return 0 ;;
         esac
         return 1
     }
