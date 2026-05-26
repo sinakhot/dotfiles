@@ -48,11 +48,13 @@ if status is-interactive
     end
 
     # keychain — persistent ssh-agent across shells (one agent per boot).
-    # No key args: agent starts + SSH_AUTH_SOCK is exported, but ssh-add is
-    # never auto-invoked. Run `ssh-add ~/.ssh/<key>` manually when needed;
-    # passphrase is then cached for the life of the agent.
+    # `--noask` keeps shell start silent: encrypted keys are skipped instead
+    # of prompting. Listing keys is still required so keychain writes the
+    # env file (~/.keychain/<host>-fish) — without a key arg new shells lose
+    # SSH_AUTH_SOCK when the originating shell exits. Load encrypted keys
+    # manually once per boot: `ssh-add ~/.ssh/<key>`.
     if command -q keychain
-        keychain --quiet --agents ssh
+        keychain --quiet --noask id_ed25519
         set -l _kc ~/.keychain/(hostname)-fish
         test -f $_kc; and source $_kc
     end
