@@ -1,5 +1,49 @@
 <meta name="color-scheme" content="light dark">
 <style>
+.main-content pre {
+  position: relative;
+}
+.copy-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-family: inherit;
+  line-height: 1;
+  color: #24292f;
+  background-color: #f6f8fa;
+  border: 1px solid rgba(31, 35, 40, 0.15);
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease-in-out;
+}
+.main-content pre:hover .copy-btn,
+.copy-btn:focus {
+  opacity: 1;
+}
+.copy-btn:hover {
+  background-color: #eaeef2;
+}
+.copy-btn.copied {
+  color: #1a7f37;
+  border-color: #1a7f37;
+}
+@media (prefers-color-scheme: dark) {
+  .copy-btn {
+    color: #c9d1d9;
+    background-color: #21262d;
+    border-color: #30363d;
+  }
+  .copy-btn:hover {
+    background-color: #30363d;
+  }
+  .copy-btn.copied {
+    color: #3fb950;
+    border-color: #3fb950;
+  }
+}
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #0d1117;
@@ -78,5 +122,77 @@
   .site-footer-credits {
     color: #8b949e;
   }
+  .main-content .highlight .c,
+  .main-content .highlight .cm,
+  .main-content .highlight .c1,
+  .main-content .highlight .cs { color: #8b949e; }
+  .main-content .highlight .k,
+  .main-content .highlight .kd,
+  .main-content .highlight .kn,
+  .main-content .highlight .kp,
+  .main-content .highlight .kr,
+  .main-content .highlight .kt,
+  .main-content .highlight .o,
+  .main-content .highlight .ow { color: #ff7b72; }
+  .main-content .highlight .s,
+  .main-content .highlight .s1,
+  .main-content .highlight .s2,
+  .main-content .highlight .sb,
+  .main-content .highlight .sc,
+  .main-content .highlight .sd,
+  .main-content .highlight .se,
+  .main-content .highlight .sh,
+  .main-content .highlight .si,
+  .main-content .highlight .sx,
+  .main-content .highlight .sr,
+  .main-content .highlight .ss { color: #a5d6ff; }
+  .main-content .highlight .m,
+  .main-content .highlight .mf,
+  .main-content .highlight .mh,
+  .main-content .highlight .mi,
+  .main-content .highlight .mo,
+  .main-content .highlight .il { color: #79c0ff; }
+  .main-content .highlight .nb,
+  .main-content .highlight .bp { color: #ffa657; }
+  .main-content .highlight .nt { color: #7ee787; }
+  .main-content .highlight .nf,
+  .main-content .highlight .fm { color: #d2a8ff; }
+  .main-content .highlight .nv,
+  .main-content .highlight .vc,
+  .main-content .highlight .vg,
+  .main-content .highlight .vi { color: #79c0ff; }
+  .main-content .highlight .na { color: #7ee787; }
+  .main-content .highlight .err { color: #ffa198; background-color: transparent; }
+  .main-content .highlight .gi { color: #3fb950; }
+  .main-content .highlight .gd { color: #ffa198; }
+  .main-content .highlight .gh,
+  .main-content .highlight .gu { color: #79c0ff; }
 }
 </style>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.main-content pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+    btn.setAttribute('aria-label', 'Copy code to clipboard');
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = (code ? code.innerText : pre.innerText).replace(/\n$/, '');
+      navigator.clipboard.writeText(text).then(function () {
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(function () {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 1500);
+      }).catch(function () {
+        btn.textContent = 'Error';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1500);
+      });
+    });
+    pre.appendChild(btn);
+  });
+});
+</script>
