@@ -47,9 +47,12 @@ if status is-interactive
         direnv hook fish | source
     end
 
-    # keychain — persistent ssh-agent across shells (one agent per boot)
+    # keychain — persistent ssh-agent across shells (one agent per boot).
+    # No key args: agent starts + SSH_AUTH_SOCK is exported, but ssh-add is
+    # never auto-invoked. Run `ssh-add ~/.ssh/<key>` manually when needed;
+    # passphrase is then cached for the life of the agent.
     if command -q keychain
-        keychain --quiet id_ed25519
+        keychain --quiet --agents ssh
         set -l _kc ~/.keychain/(hostname)-fish
         test -f $_kc; and source $_kc
     end
