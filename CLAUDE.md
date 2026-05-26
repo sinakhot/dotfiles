@@ -17,7 +17,7 @@ tool versions + config changes.
 
 ## Design
 
-Six sequential stages in `install.sh`, each guarded by a `SKIP_*` env var:
+Seven sequential stages in `install.sh`, each guarded by a `SKIP_*` env var:
 
 | Stage | Action | Skip flag |
 |---|---|---|
@@ -27,6 +27,7 @@ Six sequential stages in `install.sh`, each guarded by a `SKIP_*` env var:
 | 4 | `mise install` → all pinned tools as prebuilt binaries (github/aqua backends) | `SKIP_MISE=1` |
 | 5 | fisher + `chsh -s fish` | `SKIP_FISH=1` |
 | 6 | macOS only: save login-keychain password for `~/.ssh/rc` auto-unlock | `SKIP_KEYCHAIN=1` |
+| 7 | AI dev tools: Claude Code, rtk (+ `rtk init -g --auto-patch`), caveman | `SKIP_AI_TOOLS=1` |
 
 **Single source of truth:** `home/dot_config/mise/config.toml` pins every tool
 version. One file change → reproducible across every machine.

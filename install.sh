@@ -17,6 +17,8 @@ set -euo pipefail
 #   SKIP_GH_AUTH=1   — skip gh auth status + scope check
 #   SKIP_MISE=1      — skip `mise install` stage
 #   SKIP_FISH=1      — skip fish post-setup (fisher + chsh)
+#   SKIP_KEYCHAIN=1  — skip macOS keychain password save
+#   SKIP_AI_TOOLS=1  — skip Claude Code / rtk / caveman install
 #   NONINTERACTIVE=1 — don't try chsh / gh auth login (CI runners can't take stdin)
 # ──────────────────────────────────────────────────────────────
 DOTFILES_REPO="${DOTFILES_REPO:-sinakhot/dotfiles}"
@@ -112,7 +114,7 @@ install_gh_ubuntu() {
 }
 
 stage_bootstrap() {
-    info "Stage 1/6: bootstrap (git, curl, fish, gh, mise, chezmoi)"
+    info "Stage 1/7: bootstrap (git, curl, fish, gh, mise, chezmoi)"
     case "$OS" in
         macos)      pkg_install git curl fish keychain gh btop eza dust ;;
         ubuntu|wsl)
@@ -152,10 +154,10 @@ stage_bootstrap() {
 
 stage_dotfiles() {
     if [[ "${SKIP_DOTFILES:-0}" == "1" ]]; then
-        warn "Stage 2/6: dotfiles SKIPPED (SKIP_DOTFILES=1)"
+        warn "Stage 2/7: dotfiles SKIPPED (SKIP_DOTFILES=1)"
         return
     fi
-    info "Stage 2/6: dotfiles via chezmoi (repo: $DOTFILES_REPO@$DOTFILES_BRANCH)"
+    info "Stage 2/7: dotfiles via chezmoi (repo: $DOTFILES_REPO@$DOTFILES_BRANCH)"
     if [[ -d "$HOME/.local/share/chezmoi/.git" ]]; then
         info "chezmoi already initialized; updating…"
         chezmoi update --apply
@@ -167,10 +169,10 @@ stage_dotfiles() {
 
 stage_gh_auth() {
     if [[ "${SKIP_GH_AUTH:-0}" == "1" ]]; then
-        warn "Stage 3/6: gh auth SKIPPED (SKIP_GH_AUTH=1)"
+        warn "Stage 3/7: gh auth SKIPPED (SKIP_GH_AUTH=1)"
         return
     fi
-    info "Stage 3/6: gh auth status + scopes"
+    info "Stage 3/7: gh auth status + scopes"
 
     if ! command -v gh >/dev/null 2>&1; then
         warn "gh not installed; skipping auth check"
@@ -240,10 +242,10 @@ stage_gh_auth() {
 
 stage_mise() {
     if [[ "${SKIP_MISE:-0}" == "1" ]]; then
-        warn "Stage 4/6: mise install SKIPPED (SKIP_MISE=1)"
+        warn "Stage 4/7: mise install SKIPPED (SKIP_MISE=1)"
         return
     fi
-    info "Stage 4/6: mise tools"
+    info "Stage 4/7: mise tools"
     if [[ ! -f "$HOME/.config/mise/config.toml" ]]; then
         warn "No ~/.config/mise/config.toml yet — skipping (add it via chezmoi)"
         return
@@ -289,10 +291,10 @@ stage_mise() {
 
 stage_fish() {
     if [[ "${SKIP_FISH:-0}" == "1" ]]; then
-        warn "Stage 5/6: fish post-setup SKIPPED (SKIP_FISH=1)"
+        warn "Stage 5/7: fish post-setup SKIPPED (SKIP_FISH=1)"
         return
     fi
-    info "Stage 5/6: fish post-setup"
+    info "Stage 5/7: fish post-setup"
 
     # fisher
     if ! fish -c 'functions -q fisher' 2>/dev/null; then
@@ -322,13 +324,13 @@ stage_fish() {
 
 stage_keychain() {
     if [[ "${SKIP_KEYCHAIN:-0}" == "1" ]]; then
-        warn "Stage 6/6: keychain SKIPPED (SKIP_KEYCHAIN=1)"
+        warn "Stage 6/7: keychain SKIPPED (SKIP_KEYCHAIN=1)"
         return
     fi
     if [[ "$OS" != "macos" ]]; then
         return
     fi
-    info "Stage 6/6: macOS login keychain auto-unlock"
+    info "Stage 6/7: macOS login keychain auto-unlock"
 
     # Unlocking is wired via the chezmoi-managed ~/.ssh/rc, which sshd runs at
     # the start of every SSH session (any auth method, interactive or not) so
@@ -355,6 +357,57 @@ stage_keychain() {
     ok "Saved ~/.config/keychain-pw"
 }
 
+stage_ai_tools() {
+    if [[ "${SKIP_AI_TOOLS:-0}" == "1" ]]; then
+        warn "Stage 7/7: AI dev tools SKIPPED (SKIP_AI_TOOLS=1)"
+        return
+    fi
+    info "Stage 7/7: AI dev tools (Claude Code + rtk + caveman)"
+
+    # Make sure mise-managed bins (node) are on PATH for caveman's npx.
+    if command -v mise >/dev/null 2>&1; then
+        eval "$(mise activate bash --shims 2>/dev/null)" 2>/dev/null || true
+        export PATH="$HOME/.local/share/mise/shims:$PATH"
+    fi
+
+    # Claude Code — official Anthropic installer (idempotent, updates in place)
+    if ! command -v claude >/dev/null 2>&1; then
+        info "Installing Claude Code…"
+        curl -fsSL https://claude.ai/install.sh | bash \
+            || warn "Claude Code install failed (continuing)"
+    else
+        ok "Claude Code already installed"
+    fi
+
+    # rtk — Rust Token Killer (rtk-ai/rtk, NOT crates.io rtk/Rust Type Kit)
+    if command -v rtk >/dev/null 2>&1 && rtk gain >/dev/null 2>&1; then
+        ok "rtk already installed"
+    else
+        info "Installing rtk…"
+        curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh \
+            || warn "rtk install failed (continuing)"
+        export PATH="$HOME/.local/bin:$PATH"
+    fi
+
+    # rtk init — wire up Claude Code hooks globally. `yes N` declines any
+    # destructive prompts; --auto-patch applies non-destructive config edits.
+    if command -v rtk >/dev/null 2>&1; then
+        info "Initializing rtk hooks (global, auto-patch)…"
+        yes N | rtk init -g --auto-patch || warn "rtk init failed (continuing)"
+    fi
+
+    # caveman — Claude Code skill, needs node ≥18 (provided by mise stage 4)
+    if ! command -v node >/dev/null 2>&1; then
+        warn "caveman needs node ≥18 — node not on PATH, skipping"
+    else
+        info "Installing caveman…"
+        curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash \
+            || warn "caveman install failed (continuing)"
+    fi
+
+    ok "AI dev tools stage done"
+}
+
 # ──────────────────────────────────────────────────────────────
 # Main
 # ──────────────────────────────────────────────────────────────
@@ -371,6 +424,7 @@ main() {
     stage_mise
     stage_fish
     stage_keychain
+    stage_ai_tools
 
     echo
     ok "Setup complete!"
