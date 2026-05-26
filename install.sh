@@ -370,24 +370,19 @@ stage_ai_tools() {
         export PATH="$HOME/.local/share/mise/shims:$PATH"
     fi
 
-    # Claude Code — official Anthropic installer (idempotent, updates in place)
-    if ! command -v claude >/dev/null 2>&1; then
-        info "Installing Claude Code…"
-        curl -fsSL https://claude.ai/install.sh | bash \
-            || warn "Claude Code install failed (continuing)"
-    else
-        ok "Claude Code already installed"
-    fi
+    # All three installers are idempotent and self-updating — re-run install.sh
+    # to pull the latest versions. No `command -v` guards on purpose.
+
+    # Claude Code — official Anthropic installer
+    info "Installing / updating Claude Code…"
+    curl -fsSL https://claude.ai/install.sh | bash \
+        || warn "Claude Code install failed (continuing)"
 
     # rtk — Rust Token Killer (rtk-ai/rtk, NOT crates.io rtk/Rust Type Kit)
-    if command -v rtk >/dev/null 2>&1 && rtk gain >/dev/null 2>&1; then
-        ok "rtk already installed"
-    else
-        info "Installing rtk…"
-        curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh \
-            || warn "rtk install failed (continuing)"
-        export PATH="$HOME/.local/bin:$PATH"
-    fi
+    info "Installing / updating rtk…"
+    curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh \
+        || warn "rtk install failed (continuing)"
+    export PATH="$HOME/.local/bin:$PATH"
 
     # rtk init — wire up Claude Code hooks globally. `yes N` declines any
     # destructive prompts; --auto-patch applies non-destructive config edits.
@@ -400,7 +395,7 @@ stage_ai_tools() {
     if ! command -v node >/dev/null 2>&1; then
         warn "caveman needs node ≥18 — node not on PATH, skipping"
     else
-        info "Installing caveman…"
+        info "Installing / updating caveman…"
         curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash \
             || warn "caveman install failed (continuing)"
     fi
