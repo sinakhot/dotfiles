@@ -385,10 +385,14 @@ stage_ai_tools() {
     export PATH="$HOME/.local/bin:$PATH"
 
     # rtk init — wire up Claude Code hooks globally. `yes N` declines any
-    # destructive prompts; --auto-patch applies non-destructive config edits.
+    # remaining prompts; --auto-patch applies non-destructive config edits.
+    # `yes` is wrapped in `|| true`: it dies on SIGPIPE (141) once rtk stops
+    # reading stdin, and under pipefail that 141 would otherwise falsely trip
+    # the "rtk init failed" warning even though rtk itself exited 0.
     if command -v rtk >/dev/null 2>&1; then
         info "Initializing rtk hooks (global, auto-patch)…"
-        yes N | rtk init -g --auto-patch || warn "rtk init failed (continuing)"
+        { yes N 2>/dev/null || true; } | rtk init -g --auto-patch \
+            || warn "rtk init failed (continuing)"
     fi
 
     # caveman — Claude Code skill, needs node ≥18 (provided by mise stage 4)
@@ -396,7 +400,7 @@ stage_ai_tools() {
         warn "caveman needs node ≥18 — node not on PATH, skipping"
     else
         info "Installing / updating caveman…"
-        curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash \
+        curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash -s -- --no-mcp-shrink \
             || warn "caveman install failed (continuing)"
     fi
 
