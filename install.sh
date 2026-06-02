@@ -269,6 +269,14 @@ stage_mise() {
         rm -f "$mise_log"
         info "Pruning orphaned mise installs…"
         mise prune || warn "mise prune failed (non-fatal)"
+        # `mise prune` misses cross-backend orphans (e.g. old github: installs
+        # left behind after a backend switch to aqua:). Uninstall anything on
+        # disk but not in the active config. Idempotent: no-op once clean.
+        comm -23 \
+            <(mise ls --installed 2>/dev/null | awk '{print $1"@"$2}' | sort -u) \
+            <(mise ls --current   2>/dev/null | awk '{print $1"@"$2}' | sort -u) \
+          | xargs -r -n1 mise uninstall \
+          || warn "orphan cleanup failed (non-fatal)"
         return
     fi
 
