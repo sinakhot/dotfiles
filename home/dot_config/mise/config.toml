@@ -1,8 +1,10 @@
 # ~/.config/mise/config.toml — managed by chezmoi (sinakhot/dotfiles)
 # https://mise.jdx.dev/configuration.html
 #
-# Most tools installed as prebuilt binaries via the `github` backend (formerly `ubi`).
-# Some use `aqua` for cross-platform coverage where upstream lacks macOS releases.
+# Tools installed via the `aqua` backend (mise's preferred backend for all of
+# these): curated asset selection + checksum/SLSA verification, and avoids the
+# github/ubi backend's wrong-asset guessing (see devpod note below).
+# `github:` is the exception, used only where aqua's registry lags or lacks a tool.
 # Tools with `os = ["linux"]` are linux-only here; macOS provisions them via brew
 # in install.sh stage_bootstrap (btop, eza, dust — no macOS-arm64 prebuilts upstream).
 # `mise install` provisions everything below identically across platforms.
@@ -14,67 +16,67 @@ python  = "3.12"
 go      = "latest"
 
 # ── Foundation ──────────────────────────────────────────────────
-"github:starship/starship"        = "latest"
-"github:zellij-org/zellij"        = "latest"
-"github:junegunn/fzf"             = "latest"
-"github:ajeetdsouza/zoxide"       = "latest"
+"aqua:starship/starship"          = "latest"
+"aqua:zellij-org/zellij"          = "latest"
+"aqua:junegunn/fzf"               = "latest"
+"aqua:ajeetdsouza/zoxide"         = "latest"
 
 # ── File / search replacements ──────────────────────────────────
-"github:BurntSushi/ripgrep"       = { version = "latest", exe = "rg" }
-"github:sharkdp/fd"               = "latest"
-"github:sharkdp/bat"              = "latest"
-"aqua:eza-community/eza"       = { version = "latest", os = ["linux"] }
-"github:sxyazi/yazi"              = { version = "latest", exe = "yazi" }
+"aqua:BurntSushi/ripgrep"         = { version = "latest", exe = "rg" }
+"aqua:sharkdp/fd"                 = "latest"
+"aqua:sharkdp/bat"                = "latest"
+"aqua:eza-community/eza"          = { version = "latest", os = ["linux"] }
+"aqua:sxyazi/yazi"                = { version = "latest", exe = "yazi" }
 
 # ── Dev / git ───────────────────────────────────────────────────
-"github:cli/cli"                  = { version = "latest", exe = "gh" }
-"github:direnv/direnv"            = "latest"
-"github:jesseduffield/lazygit"    = "latest"
-"github:dandavison/delta"         = "latest"
+"aqua:cli/cli"                    = { version = "latest", exe = "gh" }
+"aqua:direnv/direnv"              = "latest"
+"aqua:jesseduffield/lazygit"      = "latest"
+"aqua:dandavison/delta"           = "latest"
 # devpod: aqua picks the raw `devpod-<os>-<arch>` CLI binary. The github/ubi
 # backend wrongly selects the desktop bundle (DevPod_*.tar.gz → dev-pod-desktop).
 "aqua:loft-sh/devpod"             = "latest"
 
 # ── Language ecosystem speedups ─────────────────────────────────
-"github:astral-sh/uv"             = "latest"
-"github:cargo-bins/cargo-binstall" = "latest"
+"aqua:astral-sh/uv"               = "latest"
+"aqua:cargo-bins/cargo-binstall"  = "latest"
 
 # ── Editor ──────────────────────────────────────────────────────
 "aqua:neovim/neovim"           = "latest"
 
 # ── System monitoring ───────────────────────────────────────────
 "aqua:aristocratos/btop"       = { version = "latest", os = ["linux"] }
-"github:bootandy/dust"            = { version = "latest", os = ["linux"] }
-"github:muesli/duf"               = "latest"
-"github:dalance/procs"            = "latest"
+"aqua:bootandy/dust"              = { version = "latest", os = ["linux"] }
+"aqua:muesli/duf"                 = "latest"
+"aqua:dalance/procs"              = "latest"
 
 # ── Data wrangling ──────────────────────────────────────────────
-"github:jqlang/jq"                = "latest"
-"github:mikefarah/yq"             = "latest"
-"github:tomnomnom/gron"           = "latest"
-"github:johnkerl/miller"          = { version = "latest", exe = "mlr" }
+"aqua:jqlang/jq"                  = "latest"
+"aqua:mikefarah/yq"               = "latest"
+"aqua:tomnomnom/gron"             = "latest"
+"aqua:johnkerl/miller"            = { version = "latest", exe = "mlr" }
 
 # ── Task runner ─────────────────────────────────────────────────
-"github:go-task/task"             = "latest"
+"aqua:go-task/task"               = "latest"
 
 # ── Kubernetes ──────────────────────────────────────────────────
 kubectl                          = "latest"
 helm                             = "latest"
-"github:derailed/k9s"               = "latest"
-"github:ahmetb/kubectx"             = "latest"
-"github:stern/stern"                = "latest"
-"github:fluxcd/flux2"               = { version = "latest", exe = "flux" }
+"aqua:derailed/k9s"                 = "latest"
+"aqua:ahmetb/kubectx"               = "latest"
+"aqua:stern/stern"                  = "latest"
+"aqua:fluxcd/flux2"                 = { version = "latest", exe = "flux" }
 
 # ── Secrets ─────────────────────────────────────────────────────
-"github:getsops/sops"               = "latest"
-"github:FiloSottile/age"            = "latest"
+"aqua:getsops/sops"                 = "latest"
+"aqua:FiloSottile/age"              = "latest"
 # keychain: distro pkg (portable shell script, no per-OS binary release).
 # Installed in install.sh stage_bootstrap.
 
 # ── HTTP / reference / benchmark ────────────────────────────────
-"github:ducaale/xh"                 = "latest"
-"github:tldr-pages/tlrc"            = { version = "latest", exe = "tldr" }
-"github:sharkdp/hyperfine"          = "latest"
+"aqua:ducaale/xh"                   = "latest"
+"aqua:tldr-pages/tlrc"              = { version = "latest", exe = "tldr" }
+"aqua:sharkdp/hyperfine"            = "latest"
 
 [settings]
 # Auto-install missing tools when running `mise <cmd>` in a dir with .mise.toml
