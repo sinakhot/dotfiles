@@ -24,6 +24,16 @@ if set -q WSL_DISTRO_NAME; and command -q wslview
 end
 
 # ──────────────────────────────────────────────────────────────
+# Kubernetes — default to the user kubeconfig when present.
+# On k3s nodes, `kubectl` is a wrapper that otherwise defaults to the
+# root-owned /etc/rancher/k3s/k3s.yaml (permission denied for non-root);
+# pointing KUBECONFIG at ~/.kube/config makes bare `kubectl` use it.
+# ──────────────────────────────────────────────────────────────
+if test -f $HOME/.kube/config
+    set -gx KUBECONFIG $HOME/.kube/config
+end
+
+# ──────────────────────────────────────────────────────────────
 # Interactive-only setup
 # ──────────────────────────────────────────────────────────────
 if status is-interactive
