@@ -313,17 +313,25 @@ stage_fish() {
         ' || warn "fisher install failed; install manually"
     fi
 
-    # Default shell
-    local fish_path
+    # Default shell.
+    # `chsh -s` authenticates the *current user* via PAM and prompts for a
+    # password — which fails non-interactively (curl|bash, NONINTERACTIVE, no
+    # tty) with "chsh: PAM: Authentication failure", silently leaving the login
+    # shell as bash. Set it via sudo instead (no PAM password for the target
+    # user); passwordless/tty sudo is already assumed by every other stage.
+    local fish_path target_user
     fish_path="$(command -v fish)"
-    if [[ "${NONINTERACTIVE:-0}" == "1" ]]; then
-        info "NONINTERACTIVE=1 — skipping chsh"
-    elif [[ "${SHELL:-}" != "$fish_path" ]]; then
+    target_user="${USER:-$(whoami)}"
+    if [[ "$(getent passwd "$target_user" 2>/dev/null | cut -d: -f7)" == "$fish_path" \
+          || "${SHELL:-}" == "$fish_path" ]]; then
+        info "Login shell already fish"
+    else
         info "Changing default shell to fish"
-        if chsh -s "$fish_path"; then
-            ok "Shell changed; log out + back in to take effect"
+        if sudo_if_needed chsh -s "$fish_path" "$target_user" 2>/dev/null \
+           || sudo_if_needed usermod -s "$fish_path" "$target_user" 2>/dev/null; then
+            ok "Shell changed to fish; log out + back in to take effect"
         else
-            warn "chsh failed; run manually: chsh -s $fish_path"
+            warn "Could not change shell; run manually: chsh -s $fish_path"
         fi
     fi
 
