@@ -35,7 +35,8 @@ go      = "latest"
 "aqua:dandavison/delta"           = "latest"
 # devpod: aqua picks the raw `devpod-<os>-<arch>` CLI binary. The github/ubi
 # backend wrongly selects the desktop bundle (DevPod_*.tar.gz → dev-pod-desktop).
-"aqua:loft-sh/devpod"             = "latest"
+# No linux-arm64 release upstream → skip on that platform.
+"aqua:loft-sh/devpod"             = { version = "latest", os = ["linux/x64", "macos"] }
 
 # ── Language ecosystem speedups ─────────────────────────────────
 "aqua:astral-sh/uv"               = "latest"
@@ -48,7 +49,8 @@ go      = "latest"
 "aqua:aristocratos/btop"       = { version = "latest", os = ["linux"] }
 "aqua:bootandy/dust"              = { version = "latest", os = ["linux"] }
 "aqua:muesli/duf"                 = "latest"
-"aqua:dalance/procs"              = "latest"
+# procs: no linux-arm64 prebuilt in aqua registry → skip on that platform.
+"aqua:dalance/procs"              = { version = "latest", os = ["linux/x64", "macos"] }
 
 # ── Data wrangling ──────────────────────────────────────────────
 "aqua:jqlang/jq"                  = "latest"
@@ -75,7 +77,8 @@ helm                             = "latest"
 
 # ── HTTP / reference / benchmark ────────────────────────────────
 "aqua:ducaale/xh"                   = "latest"
-"aqua:tldr-pages/tlrc"              = { version = "latest", exe = "tldr" }
+# tlrc: no linux-arm64 prebuilt in aqua registry → skip on that platform.
+"aqua:tldr-pages/tlrc"              = { version = "latest", exe = "tldr", os = ["linux/x64", "macos"] }
 "aqua:sharkdp/hyperfine"            = "latest"
 
 [settings]
