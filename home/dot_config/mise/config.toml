@@ -35,8 +35,12 @@ go      = "latest"
 "aqua:dandavison/delta"           = "latest"
 # devpod: aqua picks the raw `devpod-<os>-<arch>` CLI binary. The github/ubi
 # backend wrongly selects the desktop bundle (DevPod_*.tar.gz → dev-pod-desktop).
-# No linux-arm64 release upstream → skip on that platform.
-"aqua:loft-sh/devpod"             = { version = "latest", os = ["linux/x64", "macos"] }
+# Pinned to the last stable (0.6.15) — every newer release is an alpha
+# pre-release, so `latest` resolves to nothing and warns. The os filter still
+# skips install on linux-arm64 (no arm64 asset), but `latest` would also make
+# mise try (and fail) to resolve a version list there; a pinned version skips
+# that resolution entirely, silencing the WARN on arm64 hosts.
+"aqua:loft-sh/devpod"             = { version = "0.6.15", os = ["linux/x64", "macos"] }
 
 # ── Language ecosystem speedups ─────────────────────────────────
 "aqua:astral-sh/uv"               = "latest"
