@@ -157,6 +157,16 @@ stage_dotfiles() {
         warn "Stage 2/7: dotfiles SKIPPED (SKIP_DOTFILES=1)"
         return
     fi
+    # DOTFILES_SOURCE: apply from a local checked-out tree instead of cloning
+    # the remote. Used by CI to test the PR's own working copy without
+    # depending on the branch still existing on the remote (it may be deleted
+    # the moment the PR merges, mid-run). chezmoi honors .chezmoiroot here.
+    if [[ -n "${DOTFILES_SOURCE:-}" ]]; then
+        info "Stage 2/7: dotfiles via chezmoi (local source: $DOTFILES_SOURCE)"
+        chezmoi apply --source "$DOTFILES_SOURCE"
+        ok "Dotfiles applied"
+        return
+    fi
     info "Stage 2/7: dotfiles via chezmoi (repo: $DOTFILES_REPO@$DOTFILES_BRANCH)"
     if [[ -d "$HOME/.local/share/chezmoi/.git" ]]; then
         info "chezmoi already initialized; updating…"

@@ -119,9 +119,11 @@ manual dispatch. Matrix:
 - `macos-bootstrap` — Stage 1 on macOS runner
 - `shellcheck` — lint `install.sh`
 
-CI uses the PR/branch's own copy of `install.sh` and points chezmoi at the same
-ref via `DOTFILES_BRANCH=$GITHUB_HEAD_REF`. Don't introduce changes that depend
-on `main` being current.
+CI uses the PR/branch's own copy of `install.sh` and applies the checked-out
+working tree directly via `DOTFILES_SOURCE=$GITHUB_WORKSPACE` (chezmoi
+`apply --source`, honoring `.chezmoiroot`). This avoids a remote clone, so the
+test never depends on `main` being current — nor on the PR branch still
+existing on the remote (it may be deleted the instant the PR merges, mid-run).
 
 ## Distribution: GitHub Pages + Cloudflare
 
