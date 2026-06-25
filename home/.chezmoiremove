@@ -3,3 +3,6 @@
 
 # zellij → replaced by herdr (ubi:ogulcancelik/herdr)
 .config/zellij
+
+# yazi → removed
+.config/yazi

@@ -50,7 +50,6 @@ version. One file change → reproducible across every machine.
 │       ├── fish/functions/       # greeting dashboard, helper fns
 │       ├── starship.toml         # → ~/.config/starship.toml
 │       ├── alacritty/alacritty.toml  # → ~/.config/alacritty/ (catppuccin-macchiato, #010101 bg)
-│       ├── yazi/                 # → ~/.config/yazi/
 │       ├── nvim/                 # → ~/.config/nvim/
 │       └── mise/config.toml      # → ~/.config/mise/config.toml
 ├── docs/superpowers/             # design specs + implementation plans

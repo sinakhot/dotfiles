@@ -90,15 +90,6 @@ function fish_greeting --description "sinakhot/dotfiles tool dashboard"
     printf "      %sssh-add -l%s     list loaded keys   %sssh-add -D%s  drop all\n" $key $reset $key $reset
     printf "      %s└─ keys persist until reboot; devcontainers inherit via \$SSH_AUTH_SOCK%s\n" $desc $reset
     echo
-    printf "  %s▸ Yazi file manager%s %s(blazing TUI, cd-on-quit)%s\n" $hero $reset $desc $reset
-    printf "      %sy%s             fullscreen yazi; on quit, shell cd's to last dir\n" $key $reset
-    printf "      %sAlt-y%s         floating yazi pane (keybind TBD under herdr)\n" $key $reset
-    printf "      %sEnter%s open   %sSpace%s select   %sa%s create   %sd%s trash   %sr%s rename\n" \
-        $key $reset $key $reset $key $reset $key $reset $key $reset
-    printf "      %s/%s find   %sgg%s/%sG%s top/bottom   %sTab%s preview   %sq%s quit\n" \
-        $key $reset $key $reset $key $reset $key $reset $key $reset
-    printf "      %s└─ %sy%s wrapper writes cwd to tmpfile so shell cd's there on quit%s\n" $desc $key $desc $reset
-    echo
     printf "  %s▸ DevPod%s %s(devcontainers anywhere — docker/k8s/cloud backends)%s\n" $hero $reset $desc $reset
     printf "      %sdevpod provider add docker%s   one-time: register a backend\n" $key $reset
     printf "      %sdevpod up .%s          start/attach a workspace from this repo\n" $key $reset

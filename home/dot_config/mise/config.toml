@@ -26,7 +26,6 @@ go      = "latest"
 "aqua:sharkdp/fd"                 = "latest"
 "aqua:sharkdp/bat"                = "latest"
 "aqua:eza-community/eza"          = { version = "latest", os = ["linux"] }
-"aqua:sxyazi/yazi"                = { version = "latest", exe = "yazi" }
 
 # ── Dev / git ───────────────────────────────────────────────────
 "aqua:cli/cli"                    = { version = "latest", exe = "gh" }
