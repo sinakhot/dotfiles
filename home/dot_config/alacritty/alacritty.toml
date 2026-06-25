@@ -1,7 +1,7 @@
 # ~/.config/alacritty/alacritty.toml — managed by chezmoi (sinakhot/dotfiles)
 #
 # Catppuccin Macchiato palette with the primary background overridden to
-# #010101 (near-black), to match the zellij catppuccin-macchiato-black theme.
+# #010101 (near-black), a deep catppuccin-macchiato-black base.
 
 [colors.primary]
 background = "#010101"

@@ -64,7 +64,7 @@ jobs:
           mise ls
           # Spot-check a few tools resolve
           mise which starship
-          mise which zellij
+          mise which herdr
           mise which fzf
           mise which rg
           mise which gh
