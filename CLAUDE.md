@@ -49,7 +49,6 @@ version. One file change → reproducible across every machine.
 │       ├── fish/config.fish      # → ~/.config/fish/config.fish
 │       ├── fish/functions/       # greeting dashboard, helper fns
 │       ├── starship.toml         # → ~/.config/starship.toml
-│       ├── zellij/config.kdl     # → ~/.config/zellij/config.kdl
 │       ├── alacritty/alacritty.toml  # → ~/.config/alacritty/ (catppuccin-macchiato, #010101 bg)
 │       ├── yazi/                 # → ~/.config/yazi/
 │       ├── nvim/                 # → ~/.config/nvim/

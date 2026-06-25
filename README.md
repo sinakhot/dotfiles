@@ -27,7 +27,7 @@ curl -fsSL https://raw.githubusercontent.com/sinakhot/dotfiles/main/install.sh |
 
 | Category | Tools |
 |---|---|
-| Prompt + multiplexer | starship, zellij |
+| Prompt + multiplexer | starship, herdr |
 | Foundation | fzf, zoxide |
 | File / search | ripgrep, fd, bat, eza |
 | Dev / git | gh, direnv, lazygit, delta |
@@ -131,7 +131,6 @@ chezmoi cd               # jump into source dir, git push when ready
 │   └── dot_config/
 │       ├── fish/config.fish      # → ~/.config/fish/config.fish
 │       ├── starship.toml         # → ~/.config/starship.toml
-│       ├── zellij/config.kdl     # → ~/.config/zellij/config.kdl
 │       └── mise/config.toml      # → ~/.config/mise/config.toml
 └── .github/workflows/
     └── smoke-test.yml            # CI: bootstrap on ubuntu/arch/macos + shellcheck

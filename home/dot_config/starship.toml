@@ -62,10 +62,10 @@ format = "[$hostname](bold red) "
 show_always = false
 style_user = "bold blue"
 
-# Custom: show zellij session when inside one
-[custom.zellij]
-command = "echo $ZELLIJ_SESSION_NAME"
-when = """ test -n "$ZELLIJ_SESSION_NAME" """
+# Custom: show herdr session when inside one
+[custom.herdr]
+command = "echo $HERDR_SESSION"
+when = """ test -n "$HERDR_SESSION" """
 format = "[$symbol($output )]($style)"
-symbol = "Z "
+symbol = "H "
 style = "bold purple"

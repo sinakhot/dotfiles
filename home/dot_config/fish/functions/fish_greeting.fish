@@ -4,14 +4,14 @@ function fish_greeting --description "sinakhot/dotfiles tool dashboard"
     set -l reset (set_color normal)
 
     echo
-    printf "  %ssinakhot/dotfiles%s %s— fish + zellij + mise stack    %s(type %scheat%s%s to redisplay)%s\n" \
+    printf "  %ssinakhot/dotfiles%s %s— fish + herdr + mise stack    %s(type %scheat%s%s to redisplay)%s\n" \
         $title $reset $desc $desc (set_color -o yellow) $reset $desc $reset
     echo
 
     __sinakhot_table "Shell & Prompt"   \
         fish      "interactive"         \
         starship  "prompt+k8s"          \
-        zellij    "multiplexer"         \
+        herdr     "agent mux"           \
         fisher    "plugin mgr"
 
     __sinakhot_table "Config Manager"   \
@@ -77,14 +77,12 @@ function fish_greeting --description "sinakhot/dotfiles tool dashboard"
     set -l hero (set_color -o magenta)
     set -l key (set_color -o yellow)
     echo
-    printf "  %s▸ Zellij workflow%s %s(persistent sessions, auto-save 60s)%s\n" $hero $reset $desc $reset
-    printf "      %sz%s             attach (or create) session \"default\"\n" $key $reset
-    printf "      %sCtrl-g%s        unlock → %sp%s pane  %st%s tab  %sn%s new  %so%s session ops\n" \
-        $key $reset $key $reset $key $reset $key $reset $key $reset
-    printf "      %sCtrl-q%s        detach (session keeps running)\n" $key $reset
-    printf "      %szls%s  list   %szk%s kill   %szd%s delete   %szda%s wipe all\n" \
-        $key $reset $key $reset $key $reset $key $reset
-    printf "      %s└─ saves layout + cwds + commands + scrollback%s\n" $desc $reset
+    printf "  %s▸ herdr workflow%s %s(agent multiplexer, mouse-first)%s\n" $hero $reset $desc $reset
+    printf "      %sh%s             start (or reconnect to) default session\n" $key $reset
+    printf "      %sCtrl-b q%s      detach client (session keeps running)\n" $key $reset
+    printf "      %shls%s  list   %shk%s stop session   %shss%s stop server\n" \
+        $key $reset $key $reset $key $reset
+    printf "      %s└─ panes are real terminal processes; sidebar shows agent state%s\n" $desc $reset
     echo
     printf "  %s▸ SSH keychain%s %s(one agent per boot, shared across shells)%s\n" $hero $reset $desc $reset
     printf "      %sssh-add%s        load default keys (~/.ssh/id_*) into agent\n" $key $reset
@@ -94,7 +92,7 @@ function fish_greeting --description "sinakhot/dotfiles tool dashboard"
     echo
     printf "  %s▸ Yazi file manager%s %s(blazing TUI, cd-on-quit)%s\n" $hero $reset $desc $reset
     printf "      %sy%s             fullscreen yazi; on quit, shell cd's to last dir\n" $key $reset
-    printf "      %sAlt-y%s         floating yazi pane inside zellij (close on exit)\n" $key $reset
+    printf "      %sAlt-y%s         floating yazi pane (keybind TBD under herdr)\n" $key $reset
     printf "      %sEnter%s open   %sSpace%s select   %sa%s create   %sd%s trash   %sr%s rename\n" \
         $key $reset $key $reset $key $reset $key $reset $key $reset
     printf "      %s/%s find   %sgg%s/%sG%s top/bottom   %sTab%s preview   %sq%s quit\n" \

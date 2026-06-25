@@ -72,11 +72,10 @@ if status is-interactive
     # ──────────────────────────────────────────────────────────
     # Abbreviations (expand on space/enter — visible before send)
     # ──────────────────────────────────────────────────────────
-    abbr -a z 'zellij attach -c default'
-    abbr -a zls 'zellij list-sessions'
-    abbr -a zk 'zellij kill-session'
-    abbr -a zd 'zellij delete-session'
-    abbr -a zda 'zellij delete-all-sessions -y'
+    abbr -a h 'herdr'
+    abbr -a hls 'herdr session list'
+    abbr -a hk 'herdr session stop'
+    abbr -a hss 'herdr server stop'
 
     abbr -a g git
     abbr -a gs 'git status'
