@@ -87,7 +87,3 @@ helm                             = "latest"
 [settings]
 # Auto-install missing tools when running `mise <cmd>` in a dir with .mise.toml
 not_found_auto_install = true
-# Quieter activation
-quiet = false
-# Trust this config without explicit `mise trust`
-# (set per-machine via `mise trust ~/.config/mise/config.toml` if you'd rather)

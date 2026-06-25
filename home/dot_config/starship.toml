@@ -61,11 +61,3 @@ format = "[$hostname](bold red) "
 [username]
 show_always = false
 style_user = "bold blue"
-
-# Custom: show herdr session when inside one
-[custom.herdr]
-command = "echo $HERDR_SESSION"
-when = """ test -n "$HERDR_SESSION" """
-format = "[$symbol($output )]($style)"
-symbol = "H "
-style = "bold purple"

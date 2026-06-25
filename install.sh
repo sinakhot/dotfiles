@@ -212,17 +212,12 @@ stage_gh_auth() {
     scopes_line="$(echo "$auth_out" | grep -E 'Token scopes:' | head -n1 || true)"
     current_scopes="$(echo "$scopes_line" | grep -oE "'[^']+'" | tr -d "'" | tr '\n' ' ' || true)"
 
-    # GitHub scope hierarchy: admin:X ⊇ write:X ⊇ read:X.
-    # `repo` umbrella covers repo:status, repo_deployment, public_repo, repo:invite, security_events.
-    # `user` covers read:user, user:email, user:follow.
+    # GitHub scope hierarchy: admin:X ⊇ write:X ⊇ read:X. A read:* scope is also
+    # satisfied by the broader write:/admin: form (covers read:org, read:packages).
     scope_satisfied() {
         local want="$1" have="$2"
         grep -qw "$want" <<<"$have" && return 0
         case "$want" in
-            read:user|user:email|user:follow)
-                     grep -qw "user" <<<"$have" && return 0 ;;
-            repo:status|repo_deployment|public_repo|repo:invite|security_events)
-                     grep -qw "repo" <<<"$have" && return 0 ;;
             read:*)  grep -qwE "write:${want#read:}|admin:${want#read:}" <<<"$have" && return 0 ;;
             write:*) grep -qw "admin:${want#write:}" <<<"$have" && return 0 ;;
         esac
