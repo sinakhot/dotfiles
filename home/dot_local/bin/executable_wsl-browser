@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Open a URL in the Windows default browser from WSL.
+#
+# Replaces wslu/wslview, which was dropped because it is not in the Ubuntu
+# 26.04 archive. Without a $BROWSER, gh falls back to sensible-browser ->
+# lynx, which hijacks the terminal with a text browser that cannot complete
+# an OAuth flow.
+#
+# cd to a Windows-visible path first, or cmd.exe warns
+# "UNC paths are not supported" on every call.
+set -euo pipefail
+cd /mnt/c
+# `start` is a cmd builtin; the empty "" is the window title it expects
+# before the URL, otherwise the URL itself is consumed as the title.
+exec cmd.exe /c start "" "$1"
