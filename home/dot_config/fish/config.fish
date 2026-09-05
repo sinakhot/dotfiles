@@ -16,14 +16,6 @@ set -gx EDITOR nvim
 set -gx VISUAL nvim
 
 # ──────────────────────────────────────────────────────────────
-# WSL — open URLs in the Windows default browser (Chrome) via wslview
-# Prevents gh / xdg-open falling back to lynx on headless WSL
-# ──────────────────────────────────────────────────────────────
-if set -q WSL_DISTRO_NAME; and command -q wslview
-    set -gx BROWSER wslview
-end
-
-# ──────────────────────────────────────────────────────────────
 # Kubernetes — default to the user kubeconfig when present.
 # On k3s nodes, `kubectl` is a wrapper that otherwise defaults to the
 # root-owned /etc/rancher/k3s/k3s.yaml (permission denied for non-root);
