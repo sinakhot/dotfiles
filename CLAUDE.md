@@ -43,14 +43,15 @@ version. One file change → reproducible across every machine.
 ├── LICENSE                       # MIT
 ├── .chezmoiroot                  # tells chezmoi source is home/
 ├── home/                         # chezmoi source — `dot_X` → `~/.X`
+│   ├── .chezmoiremove            # paths chezmoi deletes on apply (retired tools)
 │   ├── private_dot_ssh/
 │   │   └── rc                    # → ~/.ssh/rc (700 dir; macOS keychain unlock per SSH session)
+│   ├── dot_local/bin/            # → ~/.local/bin/ (unlock-keychain.sh, wsl-browser)
 │   └── dot_config/
 │       ├── fish/config.fish      # → ~/.config/fish/config.fish
-│       ├── fish/functions/       # greeting dashboard, helper fns
+│       ├── fish/functions/       # greeting, cheat sheet
 │       ├── starship.toml         # → ~/.config/starship.toml
 │       ├── alacritty/alacritty.toml  # → ~/.config/alacritty/ (catppuccin-macchiato, #010101 bg)
-│       ├── nvim/                 # → ~/.config/nvim/
 │       └── mise/config.toml      # → ~/.config/mise/config.toml
 ├── docs/superpowers/             # design specs + implementation plans
 └── .github/workflows/
@@ -61,18 +62,19 @@ version. One file change → reproducible across every machine.
 
 Most tools are mise-managed (preferred). To add one:
 
-1. Find its `ubi` source on GitHub: usually `<org>/<repo>` of the project's
-   releases page.
+1. Check the aqua registry (`aqua g -i` or
+   https://github.com/aquaproj/aqua-registry/tree/main/pkgs) for `<org>/<repo>`.
 2. Append to `home/dot_config/mise/config.toml`:
    ```toml
-   "ubi:<org>/<repo>" = "latest"
+   "aqua:<org>/<repo>" = "latest"
    ```
+   Not in aqua yet? Use `"github:<org>/<repo>"` (the `ubi:` backend is
+   deprecated, removed in mise 2027.1).
 3. Commit. On next `install.sh` run (anywhere), `mise install` picks it up.
 
 If the tool isn't on GitHub or doesn't ship prebuilt binaries:
 
 - Cargo crate → `"cargo:<crate>"` backend
-- Aqua-registered → `"aqua:<id>"` backend
 - Distro-only → add to `pkg_install` in the bootstrap stage (`install.sh`)
 
 ## Adding a new managed config
@@ -186,7 +188,7 @@ chezmoi diff
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | `install.sh` fails at stage 1 on Ubuntu | Stale apt cache | Re-run; `apt-get update` is included |
-| `mise install` fails on one tool | Upstream release naming changed | Check `ubi:<org>/<repo>` releases page, may need explicit version pin |
+| `mise install` fails on one tool | Upstream release naming changed | Check the project's releases page, may need explicit version pin |
 | `chsh: shell not in /etc/shells` | Fish path not registered | Re-run script; stage 1 registers it |
 | `dotfiles.sinakhot.com` 404 | Pages disabled or DNS not propagated | Check `gh api repos/sinakhot/dotfiles/pages` and `dig dotfiles.sinakhot.com` |
 | CI passes but local fails | Stale chezmoi clone | `rm -rf ~/.local/share/chezmoi` and re-run |

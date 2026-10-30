@@ -17,7 +17,7 @@ go      = "latest"
 
 # ── Foundation ──────────────────────────────────────────────────
 "aqua:starship/starship"          = "latest"
-"ubi:ogulcancelik/herdr"          = "latest"
+"github:ogulcancelik/herdr"       = "latest"
 "aqua:junegunn/fzf"               = "latest"
 "aqua:ajeetdsouza/zoxide"         = "latest"
 

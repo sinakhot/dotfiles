@@ -1,7 +1,7 @@
 # Targets chezmoi should delete on apply (removed from the managed set).
 # Paths are relative to the home dir (~).
 
-# zellij → replaced by herdr (ubi:ogulcancelik/herdr)
+# zellij → replaced by herdr (github:ogulcancelik/herdr)
 .config/zellij
 
 # yazi → removed
