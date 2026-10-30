@@ -18,7 +18,7 @@ set -euo pipefail
 #   SKIP_MISE=1      — skip `mise install` stage
 #   SKIP_FISH=1      — skip fish post-setup (fisher + chsh)
 #   SKIP_KEYCHAIN=1  — skip macOS keychain password save
-#   SKIP_AI_TOOLS=1  — skip Claude Code / rtk / caveman install
+#   SKIP_AI_TOOLS=1  — skip Claude Code / rtk install
 #   NONINTERACTIVE=1 — don't try chsh / gh auth login (CI runners can't take stdin)
 # ──────────────────────────────────────────────────────────────
 DOTFILES_REPO="${DOTFILES_REPO:-sinakhot/dotfiles}"
@@ -379,15 +379,9 @@ stage_ai_tools() {
         warn "Stage 7/7: AI dev tools SKIPPED (SKIP_AI_TOOLS=1)"
         return
     fi
-    info "Stage 7/7: AI dev tools (Claude Code + rtk + caveman)"
+    info "Stage 7/7: AI dev tools (Claude Code + rtk)"
 
-    # Make sure mise-managed bins (node) are on PATH for caveman's npx.
-    if command -v mise >/dev/null 2>&1; then
-        eval "$(mise activate bash --shims 2>/dev/null)" 2>/dev/null || true
-        export PATH="$HOME/.local/share/mise/shims:$PATH"
-    fi
-
-    # All three installers are idempotent and self-updating — re-run install.sh
+    # Both installers are idempotent and self-updating — re-run install.sh
     # to pull the latest versions. No `command -v` guards on purpose.
 
     # Claude Code — official Anthropic installer
@@ -410,15 +404,6 @@ stage_ai_tools() {
         info "Initializing rtk hooks (global, auto-patch)…"
         { yes N 2>/dev/null || true; } | rtk init -g --auto-patch \
             || warn "rtk init failed (continuing)"
-    fi
-
-    # caveman — Claude Code skill, needs node ≥18 (provided by mise stage 4)
-    if ! command -v node >/dev/null 2>&1; then
-        warn "caveman needs node ≥18 — node not on PATH, skipping"
-    else
-        info "Installing / updating caveman…"
-        curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash -s -- --no-mcp-shrink \
-            || warn "caveman install failed (continuing)"
     fi
 
     ok "AI dev tools stage done"

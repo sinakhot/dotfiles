@@ -47,7 +47,6 @@ curl -fsSL https://raw.githubusercontent.com/sinakhot/dotfiles/main/install.sh |
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — Anthropic's terminal coding agent
 - [rtk](https://github.com/rtk-ai/rtk) — CLI proxy that filters tool output for 60-90% LLM token savings (auto-hooked into Claude Code via `rtk init -g --auto-patch`)
-- [caveman](https://github.com/JuliusBrussee/caveman) — Claude Code skill that compresses responses ~75%
 
 ## Design
 
@@ -59,7 +58,7 @@ Seven stages, idempotent — safe to re-run:
 4. **Tools** — `mise install` reads `~/.config/mise/config.toml` and provisions every pinned tool as a prebuilt binary
 5. **Fish** — fisher + chsh
 6. **Keychain** (macOS only) — saves the login-keychain password for `~/.ssh/rc` auto-unlock
-7. **AI dev tools** — Claude Code + rtk (with `rtk init -g --auto-patch`) + caveman
+7. **AI dev tools** — Claude Code + rtk (with `rtk init -g --auto-patch`)
 
 Single source of truth = `~/.config/mise/config.toml` (managed by chezmoi). One file pins every tool version across every machine.
 
@@ -149,7 +148,7 @@ chezmoi cd               # jump into source dir, git push when ready
 | `SKIP_MISE` | `0` | skip `mise install` |
 | `SKIP_FISH` | `0` | skip fisher + chsh |
 | `SKIP_KEYCHAIN` | `0` | skip macOS keychain password save |
-| `SKIP_AI_TOOLS` | `0` | skip Claude Code + rtk + caveman install |
+| `SKIP_AI_TOOLS` | `0` | skip Claude Code + rtk install |
 | `NONINTERACTIVE` | `0` | don't try chsh / `gh auth login` (CI) |
 
 ## License
